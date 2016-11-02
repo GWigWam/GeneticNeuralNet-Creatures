@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Gnn.NeuralNet;
+using Gnn.NeuralNet.Structures.TransferFunctions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +14,8 @@ namespace Gnn.Iris {
 
         private static void Main(string[] args) {
             var data = DataReader.ReadFromFile("data/iris.data")/*.OrderBy(i => random.Next())*/;
+
+            var nw = Network.Create(new HyperbolicTangentFunction(), true, 4, 3, 4, 6);
 
             Console.ReadKey();
         }
