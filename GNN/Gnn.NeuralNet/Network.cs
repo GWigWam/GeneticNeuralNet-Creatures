@@ -58,6 +58,13 @@ namespace Gnn.NeuralNet {
             return nw;
         }
 
+        public float[] GetOutput(params float[] input) {
+            for(int i = 0; i < Input.Length; i++) {
+                Input[i].Value = input[i];
+            }
+            return Output.Select(o => o.Output).ToArray();
+        }
+
         private static IEnumerable<Variable> CreateVariables(int count) {
             for(int i = 0; i < count; i++) {
                 yield return new Variable();

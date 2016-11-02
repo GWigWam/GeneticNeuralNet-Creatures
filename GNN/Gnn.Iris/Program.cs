@@ -17,6 +17,10 @@ namespace Gnn.Iris {
 
             var nw = Network.Create(new HyperbolicTangentFunction(), true, 4, 3, 4, 6);
 
+            foreach(var d in data) {
+                var r = nw.GetOutput(d.PetalLength, d.PetalWidth, d.SepalLength, d.SepalWidth);
+            }
+
             Console.ReadKey();
         }
     }

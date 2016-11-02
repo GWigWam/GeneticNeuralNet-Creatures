@@ -11,13 +11,13 @@ namespace Gnn.Iris {
     }
 
     public struct IrisEntry {
-        public double SepalLength { get; }
-        public double SepalWidth { get; }
-        public double PetalLength { get; }
-        public double PetalWidth { get; }
+        public float SepalLength { get; }
+        public float SepalWidth { get; }
+        public float PetalLength { get; }
+        public float PetalWidth { get; }
         public IrisSpecies Species { get; }
 
-        public IrisEntry(double sl, double sw, double pl, double pw, IrisSpecies species) {
+        public IrisEntry(float sl, float sw, float pl, float pw, IrisSpecies species) {
             SepalLength = sl;
             SepalWidth = sw;
             PetalLength = pl;
