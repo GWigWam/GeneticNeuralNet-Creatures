@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2E2A8B11-83A7-49DE-B9F6-8BE066BA5E8A}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{B5C664B2-94CD-40AD-9E19-1E5F43319BDD}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Gnn.Iris</RootNamespace>
-    <AssemblyName>Gnn.Iris</AssemblyName>
+    <RootNamespace>Gnn.Genetic</RootNamespace>
+    <AssemblyName>Gnn.Genetic</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -43,22 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataReader.cs" />
-    <Compile Include="IrisEntry.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="ConvertExtensions.cs" />
+    <Compile Include="Individual.cs" />
+    <Compile Include="Procedures\Selection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <Content Include="data\iris.data">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Gnn.Genetic\Gnn.Genetic.csproj">
-      <Project>{B5C664B2-94CD-40AD-9E19-1E5F43319BDD}</Project>
-      <Name>Gnn.Genetic</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Gnn.NeuralNet\Gnn.NeuralNet.csproj">
       <Project>{EF27929B-81D2-4069-97CA-1B7E80F70FED}</Project>
       <Name>Gnn.NeuralNet</Name>

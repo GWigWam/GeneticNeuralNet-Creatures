@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers", "Helpers\Helpers.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gnn.NeuralNet", "Gnn.NeuralNet\Gnn.NeuralNet.csproj", "{EF27929B-81D2-4069-97CA-1B7E80F70FED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gnn.Genetic", "Gnn.Genetic\Gnn.Genetic.csproj", "{B5C664B2-94CD-40AD-9E19-1E5F43319BDD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{EF27929B-81D2-4069-97CA-1B7E80F70FED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF27929B-81D2-4069-97CA-1B7E80F70FED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF27929B-81D2-4069-97CA-1B7E80F70FED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5C664B2-94CD-40AD-9E19-1E5F43319BDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5C664B2-94CD-40AD-9E19-1E5F43319BDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5C664B2-94CD-40AD-9E19-1E5F43319BDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5C664B2-94CD-40AD-9E19-1E5F43319BDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

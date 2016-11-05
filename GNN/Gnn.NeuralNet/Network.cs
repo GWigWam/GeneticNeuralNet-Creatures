@@ -15,6 +15,7 @@ namespace Gnn.NeuralNet {
         public INode[][] Hidden { get; protected set; }
         public INode[] Output { get; protected set; }
         public Constant Bias { get; protected set; }
+        public Weight[] Weights { get; protected set; }
 
         public TransferFunction Transfer { get; protected set; }
 
@@ -34,6 +35,7 @@ namespace Gnn.NeuralNet {
 
             nw.Input = CreateVariables(inputCount).ToArray();
 
+            var weightList = new List<Weight>();
             INode[] prevLayer = nw.Input;
             for(int layerIndex = 0; layerIndex <= hiddenCount.Length; layerIndex++) {
                 var isOutputLayer = layerIndex == hiddenCount.Length;
@@ -45,6 +47,7 @@ namespace Gnn.NeuralNet {
                     if(hasBias) {
                         cur.AddInputs(nw.Bias.Weigh(RandomWeight(transfer)));
                     }
+                    weightList.AddRange(cur.Input.OfType<Weight>());
                 }
 
                 if(isOutputLayer) {
@@ -54,6 +57,7 @@ namespace Gnn.NeuralNet {
                     prevLayer = curLayer;
                 }
             }
+            nw.Weights = weightList.ToArray();
 
             return nw;
         }
