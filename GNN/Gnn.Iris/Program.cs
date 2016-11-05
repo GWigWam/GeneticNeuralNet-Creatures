@@ -1,4 +1,6 @@
-﻿using Gnn.NeuralNet;
+﻿using Gnn.Genetic;
+using Gnn.Genetic.Procedures;
+using Gnn.NeuralNet;
 using Gnn.NeuralNet.Structures.TransferFunctions;
 using System;
 using System.Collections.Generic;
@@ -21,7 +23,23 @@ namespace Gnn.Iris {
                 var r = nw.GetOutput(d.PetalLength, d.PetalWidth, d.SepalLength, d.SepalWidth);
             }
 
+            var indv = nw.ToIndividual(4);
+
+            var src = Generate(100).ToArray();
+            for(int i = 0; i < 100; i++) {
+                var fAvg = src.Average(ind => ind.Fitness);
+                var fMin = src.Min(ind => ind.Fitness);
+                var fMed = src.OrderBy(ind => ind.Fitness).Skip(src.Length / 2).First().Fitness;
+                src = new Selection(0.025F).Select(src).OrderByDescending(ind => ind.Fitness).ToArray();
+            }
+
             Console.ReadKey();
+        }
+
+        private static IEnumerable<Individual> Generate(int count) {
+            for(int i = 0; i < count; i++) {
+                yield return new Individual(null, random.Next(0, 100));
+            }
         }
     }
 }
