@@ -37,5 +37,14 @@ namespace Helpers {
 
             return randNormal;
         }
+
+        public static float StdDeviation(float[] values) {
+            return (float)Math.Sqrt(Variance(values));
+        }
+
+        public static float Variance(float[] values) {
+            var avg = values.Average();
+            return (float)values.Average(f => Math.Pow(f - avg, 2));
+        }
     }
 }
