@@ -29,11 +29,11 @@ namespace Gnn.Iris {
             for(int g = 0; g < 100; g++) {
                 var t = Environment.TickCount;
                 Console.Write($"\nGen: {g}");
-                for(int n = 0; n < NetworkCount; n++) {
+                Parallel.For(0, NetworkCount, (n) => {
                     var curNet = networks[n];
                     var grade = Grade(curNet, data);
                     indivs[n] = curNet.ToIndividual(grade);
-                }
+                });
                 var res = genetic.Apply(indivs).ToArray();
                 for(int n = 0; n < NetworkCount; n++) {
                     networks[n].SetWeights(res[n]);
@@ -47,7 +47,7 @@ namespace Gnn.Iris {
 
         private static IEnumerable<Network> GenerateNetworks() {
             for(int n = 0; n < NetworkCount; n++) {
-                yield return Network.Create(Transfer, true, 4, 3);
+                yield return Network.Create(Transfer, true, 4, 3, 3);
             }
         }
 
