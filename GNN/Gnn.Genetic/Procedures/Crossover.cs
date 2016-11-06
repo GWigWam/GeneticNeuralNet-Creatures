@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,14 +8,9 @@ using System.Threading.Tasks;
 namespace Gnn.Genetic.Procedures {
 
     public static class Crossover {
-        private static Random random;
-
-        static Crossover() {
-            random = new Random();
-        }
 
         public static IEnumerable<Individual> UniformCrossoverPop(IEnumerable<Individual> source) {
-            var shuffled = source.OrderBy(i => random.NextDouble()).ToArray();
+            var shuffled = source.OrderBy(i => MathHelper.Random()).ToArray();
             for(int i = 1; i < shuffled.Length; i += 2) {
                 var cRes = UniformCrossover(shuffled[i - 1], shuffled[i]);
                 yield return cRes.Item1;
@@ -28,7 +24,7 @@ namespace Gnn.Genetic.Procedures {
             var r1 = new float[length];
 
             for(int i = 0; i < length; i++) {
-                var cross = random.NextDouble() < 0.5;
+                var cross = MathHelper.Random() < 0.5;
                 r0[i] = cross ? in1.Values[i] : in0.Values[i];
                 r1[i] = cross ? in0.Values[i] : in1.Values[i];
             }

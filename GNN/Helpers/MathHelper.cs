@@ -51,7 +51,7 @@ namespace Helpers {
             return (float)avgSse;
         }
 
-        public static float Random(float min, float max) {
+        public static float Random(float min = 0, float max = 1) {
             return (float)(Rand.NextDouble() * (max - min) + min);
         }
     }

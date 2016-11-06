@@ -13,7 +13,6 @@ namespace Gnn.Iris {
 
     public class Program {
         private const int NetworkCount = 500;
-        private static Random random = new Random();
 
         //private static TransferFunction Transfer = new HyperbolicTangentFunction();
         private static TransferFunction Transfer = new SigmoidFunction();
@@ -78,10 +77,7 @@ namespace Gnn.Iris {
             throw new Exception("What...");
         }
 
-        private static float NextFloat() {
-            var range = Math.Abs(Transfer.XMax - Transfer.XMin);
-            return (float)(random.NextDouble() * range) + Transfer.XMin;
-        }
+        private static float NextFloat() => MathHelper.Random(Transfer.XMin, Transfer.XMax);
 
         private static IEnumerable<IrisEntry> NormalizeData(IrisEntry[] data, float min, float max) {
             foreach(var entry in data) {
