@@ -6,26 +6,17 @@ using System.Threading.Tasks;
 
 namespace Gnn.Genetic.Procedures {
 
-    public class Selection {
-        public float EletismFraction { get; }
+    public static class Selection {
+        private static Random random;
 
-        private Random random;
-
-        public Selection(float eletismFraction) {
-            EletismFraction = eletismFraction;
+        static Selection() {
             random = new Random();
         }
 
-        public IEnumerable<Individual> Select(Individual[] source, int? outputsize = null) {
-            var desiredSize = outputsize ?? source.Length;
-
-            var elite = Eletism(source);
-            var selected = Roulette(source, desiredSize - elite.Count());
-
-            return elite.Concat(selected);
-        }
-
-        private IEnumerable<Individual> Roulette(Individual[] source, int outputsize) {
+        /// <summary>
+        /// Roulette selction is also known as 'Fitness proportionate selection'
+        /// </summary>
+        public static IEnumerable<Individual> Roulette(IEnumerable<Individual> source, int outputsize) {
             var totalFitness = source.Sum(i => i.Fitness);
 
             for(int i = 0; i < outputsize; i++) {
@@ -38,11 +29,6 @@ namespace Gnn.Genetic.Procedures {
                 });
                 yield return selected;
             }
-        }
-
-        private IEnumerable<Individual> Eletism(Individual[] source) {
-            var take = (int)Math.Round(source.Length * EletismFraction);
-            return source.OrderByDescending(i => i.Fitness).Take(take);
         }
     }
 }
