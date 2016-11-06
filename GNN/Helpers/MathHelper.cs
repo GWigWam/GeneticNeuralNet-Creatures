@@ -38,13 +38,25 @@ namespace Helpers {
             return randNormal;
         }
 
-        public static float StdDeviation(float[] values) {
-            return (float)Math.Sqrt(Variance(values));
+        public static float StdDeviation(IEnumerable<float> values, Grouptype type) {
+            var stdDev = Math.Sqrt(Variance(values, type));
+            return (float)stdDev;
         }
 
-        public static float Variance(float[] values) {
+        public static float Variance(IEnumerable<float> values, Grouptype type) {
             var avg = values.Average();
-            return (float)values.Average(f => Math.Pow(f - avg, 2));
+            var sse = values.Sum(f => Math.Pow(f - avg, 2));
+
+            var avgSse = sse / (values.Count() - (type == Grouptype.Population ? 0 : 1));
+            return (float)avgSse;
         }
+
+        public static float Random(float min, float max) {
+            return (float)(Rand.NextDouble() * (max - min) + min);
+        }
+    }
+
+    public enum Grouptype {
+        Population, Sample
     }
 }

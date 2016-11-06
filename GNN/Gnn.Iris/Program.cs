@@ -22,13 +22,15 @@ namespace Gnn.Iris {
             var data = DataReader.ReadFromFile("data/iris.data").OrderByDescending(i => i.SepalWidth).ToArray();
             data = NormalizeData(data, Transfer.XMin, Transfer.XMax).ToArray();
             var networks = GenerateNetworks().ToArray();
-            var genetic = new Genetic.Genetic(0.02F, 0.01F, NextFloat);
+            var genetic = new Genetic.Genetic(0.02F, 0.001F, NextFloat);
             var indivs = new Individual[NetworkCount];
 
+            int genIndx = 0;
+            float avgFitness = float.MaxValue;
             var startT = Environment.TickCount;
-            for(int g = 0; g < 100; g++) {
+            do {
                 var t = Environment.TickCount;
-                Console.Write($"\nGen: {g}");
+                Console.Write($"\nGen: {genIndx}");
                 Parallel.For(0, NetworkCount, (n) => {
                     var curNet = networks[n];
                     var grade = Grade(curNet, data);
@@ -38,8 +40,10 @@ namespace Gnn.Iris {
                 for(int n = 0; n < NetworkCount; n++) {
                     networks[n].SetWeights(res[n]);
                 }
-                Console.Write($" - Avg fitness: {indivs.Average(ind => ind.Fitness):N3}, time {Environment.TickCount - t}Ms");
-            }
+                avgFitness = indivs.Average(ind => ind.Fitness);
+                Console.Write($" - Avg fitness: {avgFitness:N3}, variety: {indivs.AvgVariety():N3}, time {Environment.TickCount - t}Ms");
+                genIndx++;
+            } while(avgFitness < 0.95);
 
             Console.Write($"\n\nDone in {Environment.TickCount - startT}Ms");
             Console.ReadKey();
@@ -47,7 +51,7 @@ namespace Gnn.Iris {
 
         private static IEnumerable<Network> GenerateNetworks() {
             for(int n = 0; n < NetworkCount; n++) {
-                yield return Network.Create(Transfer, true, 4, 3, 3);
+                yield return Network.Create(Transfer, true, 4, 3);
             }
         }
 
@@ -75,7 +79,8 @@ namespace Gnn.Iris {
         }
 
         private static float NextFloat() {
-            return (float)(random.NextDouble() * 2) - 1;
+            var range = Math.Abs(Transfer.XMax - Transfer.XMin);
+            return (float)(random.NextDouble() * range) + Transfer.XMin;
         }
 
         private static IEnumerable<IrisEntry> NormalizeData(IrisEntry[] data, float min, float max) {
