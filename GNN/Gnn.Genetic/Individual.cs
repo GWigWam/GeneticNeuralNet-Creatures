@@ -12,7 +12,7 @@ namespace Gnn.Genetic {
 
         public float Fitness { get; }
 
-        public Individual(float[] values, float fitness) {
+        public Individual(float[] values, float fitness = -1) {
             Values = values;
             Fitness = fitness;
         }

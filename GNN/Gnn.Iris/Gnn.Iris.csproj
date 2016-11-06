@@ -63,6 +63,10 @@
       <Project>{EF27929B-81D2-4069-97CA-1B7E80F70FED}</Project>
       <Name>Gnn.NeuralNet</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Helpers\Helpers.csproj">
+      <Project>{FB1D964F-887B-4082-AE43-EDCEE5AFB2A0}</Project>
+      <Name>Helpers</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

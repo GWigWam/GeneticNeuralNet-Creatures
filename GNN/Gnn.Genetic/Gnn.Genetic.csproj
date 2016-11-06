@@ -41,7 +41,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConvertExtensions.cs" />
+    <Compile Include="Genetic.cs" />
     <Compile Include="Individual.cs" />
+    <Compile Include="Procedures\Crossover.cs" />
+    <Compile Include="Procedures\Elitism.cs" />
+    <Compile Include="Procedures\Mutation.cs" />
     <Compile Include="Procedures\Selection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

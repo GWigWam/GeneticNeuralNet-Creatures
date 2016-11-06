@@ -2,6 +2,7 @@
 using Gnn.Genetic.Procedures;
 using Gnn.NeuralNet;
 using Gnn.NeuralNet.Structures.TransferFunctions;
+using Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,34 +12,81 @@ using System.Threading.Tasks;
 namespace Gnn.Iris {
 
     public class Program {
-        private const int TrainSetSize = 130;
+        private const int NetworkCount = 500;
         private static Random random = new Random();
 
+        //private static TransferFunction Transfer = new HyperbolicTangentFunction();
+        private static TransferFunction Transfer = new SigmoidFunction();
+
         private static void Main(string[] args) {
-            var data = DataReader.ReadFromFile("data/iris.data")/*.OrderBy(i => random.Next())*/;
+            var data = DataReader.ReadFromFile("data/iris.data").OrderByDescending(i => i.SepalWidth).ToArray();
+            data = NormalizeData(data, Transfer.XMin, Transfer.XMax).ToArray();
+            var networks = GenerateNetworks().ToArray();
+            var genetic = new Genetic.Genetic(0.02F, 0.01F, NextFloat);
+            var indivs = new Individual[NetworkCount];
 
-            var nw = Network.Create(new HyperbolicTangentFunction(), true, 4, 3, 4, 6);
-
-            foreach(var d in data) {
-                var r = nw.GetOutput(d.PetalLength, d.PetalWidth, d.SepalLength, d.SepalWidth);
+            var startT = Environment.TickCount;
+            for(int g = 0; g < 100; g++) {
+                var t = Environment.TickCount;
+                Console.Write($"\nGen: {g}");
+                for(int n = 0; n < NetworkCount; n++) {
+                    var curNet = networks[n];
+                    var grade = Grade(curNet, data);
+                    indivs[n] = curNet.ToIndividual(grade);
+                }
+                var res = genetic.Apply(indivs).ToArray();
+                for(int n = 0; n < NetworkCount; n++) {
+                    networks[n].SetWeights(res[n]);
+                }
+                Console.Write($" - Avg fitness: {indivs.Average(ind => ind.Fitness):N3}, time {Environment.TickCount - t}Ms");
             }
 
-            var indv = nw.ToIndividual(4);
-
-            var src = Generate(100).ToArray();
-            for(int i = 0; i < 100; i++) {
-                var fAvg = src.Average(ind => ind.Fitness);
-                var fMin = src.Min(ind => ind.Fitness);
-                var fMed = src.OrderBy(ind => ind.Fitness).Skip(src.Length / 2).First().Fitness;
-                src = new Selection(0.025F).Select(src).OrderByDescending(ind => ind.Fitness).ToArray();
-            }
-
+            Console.Write($"\n\nDone in {Environment.TickCount - startT}Ms");
             Console.ReadKey();
         }
 
-        private static IEnumerable<Individual> Generate(int count) {
-            for(int i = 0; i < count; i++) {
-                yield return new Individual(null, random.Next(0, 100));
+        private static IEnumerable<Network> GenerateNetworks() {
+            for(int n = 0; n < NetworkCount; n++) {
+                yield return Network.Create(Transfer, true, 4, 3);
+            }
+        }
+
+        private static float Grade(Network nw, IrisEntry[] data) {
+            var successCount = 0;
+            foreach(var d in data) {
+                var res = nw.GetOutput(d.PetalLength, d.PetalWidth, d.SepalLength, d.SepalWidth);
+
+                var index = IndexOfMax(res);
+                var success = d.Species == (IrisSpecies)index;
+                successCount += success ? 1 : 0;
+            }
+
+            return successCount / (float)data.Length;
+        }
+
+        private static int IndexOfMax(float[] ar) {
+            float max = ar.Max();
+            for(int i = 0; i < ar.Length; i++) {
+                if(ar[i] == max) {
+                    return i;
+                }
+            }
+            throw new Exception("What...");
+        }
+
+        private static float NextFloat() {
+            return (float)(random.NextDouble() * 2) - 1;
+        }
+
+        private static IEnumerable<IrisEntry> NormalizeData(IrisEntry[] data, float min, float max) {
+            foreach(var entry in data) {
+                //TODO: it is suboptimal to calculate min and max every time
+                var petalLength = (float)MathHelper.ShiftRange(entry.PetalLength, data.Min(i => i.PetalLength), data.Max(i => i.PetalLength), min, max);
+                var petalWidth = (float)MathHelper.ShiftRange(entry.PetalWidth, data.Min(i => i.PetalWidth), data.Max(i => i.PetalWidth), min, max);
+                var sepalLength = (float)MathHelper.ShiftRange(entry.SepalLength, data.Min(i => i.SepalLength), data.Max(i => i.SepalLength), min, max);
+                var sepalWidth = (float)MathHelper.ShiftRange(entry.SepalWidth, data.Min(i => i.SepalWidth), data.Max(i => i.SepalWidth), min, max);
+
+                yield return new IrisEntry(sepalLength, sepalWidth, petalLength, petalWidth, entry.Species);
             }
         }
     }

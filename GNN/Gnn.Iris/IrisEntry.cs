@@ -10,6 +10,7 @@ namespace Gnn.Iris {
         Setosa, Versicolor, Virginica
     }
 
+    [System.Diagnostics.DebuggerDisplay("{Species}: [sl:{SepalLength}, sw:{SepalWidth}, pl:{PetalLength}, pw:{PetalWidth}]")]
     public struct IrisEntry {
         public float SepalLength { get; }
         public float SepalWidth { get; }
