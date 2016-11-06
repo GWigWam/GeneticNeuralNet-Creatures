@@ -81,10 +81,10 @@ namespace Gnn.Iris {
         private static IEnumerable<IrisEntry> NormalizeData(IrisEntry[] data, float min, float max) {
             foreach(var entry in data) {
                 //TODO: it is suboptimal to calculate min and max every time
-                var petalLength = (float)MathHelper.ShiftRange(entry.PetalLength, data.Min(i => i.PetalLength), data.Max(i => i.PetalLength), min, max);
-                var petalWidth = (float)MathHelper.ShiftRange(entry.PetalWidth, data.Min(i => i.PetalWidth), data.Max(i => i.PetalWidth), min, max);
-                var sepalLength = (float)MathHelper.ShiftRange(entry.SepalLength, data.Min(i => i.SepalLength), data.Max(i => i.SepalLength), min, max);
-                var sepalWidth = (float)MathHelper.ShiftRange(entry.SepalWidth, data.Min(i => i.SepalWidth), data.Max(i => i.SepalWidth), min, max);
+                var petalLength = MathHelper.ShiftRange(entry.PetalLength, data.Min(i => i.PetalLength), data.Max(i => i.PetalLength), min, max);
+                var petalWidth = MathHelper.ShiftRange(entry.PetalWidth, data.Min(i => i.PetalWidth), data.Max(i => i.PetalWidth), min, max);
+                var sepalLength = MathHelper.ShiftRange(entry.SepalLength, data.Min(i => i.SepalLength), data.Max(i => i.SepalLength), min, max);
+                var sepalWidth = MathHelper.ShiftRange(entry.SepalWidth, data.Min(i => i.SepalWidth), data.Max(i => i.SepalWidth), min, max);
 
                 yield return new IrisEntry(sepalLength, sepalWidth, petalLength, petalWidth, entry.Species);
             }

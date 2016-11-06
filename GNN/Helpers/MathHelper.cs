@@ -14,26 +14,26 @@ namespace Helpers {
 
         private static Random Rand = new Random(Seed);
 
-        public static double Normalize(double input, double min, double max) {
+        public static float Normalize(float input, float min, float max) {
             var val = (input - min) / (max - min);
             return val;
         }
 
-        public static IEnumerable<double> Normalize(IEnumerable<double> collection) {
-            double min = collection.Min();
-            double max = collection.Max();
+        public static IEnumerable<float> Normalize(IEnumerable<float> collection) {
+            float min = collection.Min();
+            float max = collection.Max();
 
             return collection.Select(f => Normalize(f, min, max));
         }
 
-        public static double ShiftRange(double value, double orgMin, double orgMax, double newMin, double newMax) {
+        public static float ShiftRange(float value, float orgMin, float orgMax, float newMin, float newMax) {
             var val = (((value - orgMin) / (orgMax - orgMin)) * (newMax - newMin)) + newMin;
             return val;
         }
 
-        public static double GaussianRandom(double stdDev, double mean) {
+        public static float GaussianRandom(float stdDev, float mean) {
             double randStdNormal = Math.Sqrt(-2.0 * Math.Log(Rand.NextDouble())) * Math.Sin(2.0 * Math.PI * Rand.NextDouble()); //random normal(0,1)
-            double randNormal = mean + stdDev * randStdNormal; //random normal(mean,stdDev^2)
+            float randNormal = (float)(mean + stdDev * randStdNormal); //random normal(mean,stdDev^2)
 
             return randNormal;
         }

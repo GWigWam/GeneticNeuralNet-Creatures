@@ -89,7 +89,7 @@ namespace Gnn.NeuralNet {
             var stdDev = xRange / 2 / 2;
 
             var res = MathHelper.GaussianRandom(stdDev, 0);
-            return (float)res;
+            return res;
         }
     }
 }
