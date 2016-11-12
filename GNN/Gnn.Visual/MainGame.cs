@@ -4,16 +4,31 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Gnn.Visual {
 
-    /// <summary>
-    /// This is the main type for your game.
-    /// </summary>
     public class MainGame : Game {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
+        private MainGameContent Res { get; set; }
+
+        #region FPS counter
+        private int CurSecondNr = -1;
+        private int CurFrameCount = 1;
+        private int FPS = -1;
+        #endregion FPS counter
+
         public MainGame() {
-            graphics = new GraphicsDeviceManager(this);
+            graphics = new GraphicsDeviceManager(this) {
+                PreferredBackBufferWidth = 1280,
+                PreferredBackBufferHeight = 768,
+                SynchronizeWithVerticalRetrace = true,
+            };
             Content.RootDirectory = "Content";
+
+            IsFixedTimeStep = false;
+            IsMouseVisible = true;
+
+            Window.IsBorderless = false;
+            Window.Title = "GNN";
         }
 
         /// <summary>
@@ -23,7 +38,7 @@ namespace Gnn.Visual {
         /// and initialize them as well.
         /// </summary>
         protected override void Initialize() {
-            // TODO: Add your initialization logic here
+            Res = new MainGameContent();
 
             base.Initialize();
         }
@@ -36,7 +51,7 @@ namespace Gnn.Visual {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            Res.Init(Content);
         }
 
         /// <summary>
@@ -53,10 +68,9 @@ namespace Gnn.Visual {
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime) {
-            if(GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if(Keyboard.GetState().IsKeyDown(Keys.Escape)) {
                 Exit();
-
-            // TODO: Add your update logic here
+            }
 
             base.Update(gameTime);
         }
@@ -67,10 +81,24 @@ namespace Gnn.Visual {
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime) {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+            spriteBatch.Begin();
 
-            // TODO: Add your drawing code here
+            DrawFps(gameTime, spriteBatch);
 
+            spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        private void DrawFps(GameTime gt, SpriteBatch sb) {
+            if(gt.TotalGameTime.Seconds == CurSecondNr) {
+                CurFrameCount++;
+            } else {
+                CurSecondNr = gt.TotalGameTime.Seconds;
+                FPS = CurFrameCount;
+                CurFrameCount = 1;
+            }
+
+            sb.DrawString(Res.Consolas, $"{FPS} FPS", new Vector2(0, 0), Color.Black);
         }
     }
 }
