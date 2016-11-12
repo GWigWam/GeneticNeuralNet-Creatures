@@ -14,8 +14,8 @@ namespace Gnn.Iris {
     public class Program {
         private const int NetworkCount = 500;
 
-        //private static TransferFunction Transfer = new HyperbolicTangentFunction();
-        private static TransferFunction Transfer = new SigmoidFunction();
+        private static TransferFunction Transfer = new HyperbolicTangentFunction();
+        //private static TransferFunction Transfer = new SigmoidFunction();
 
         private static void Main(string[] args) {
             var data = DataReader.ReadFromFile("data/iris.data").OrderByDescending(i => i.SepalWidth).ToArray();
@@ -42,7 +42,7 @@ namespace Gnn.Iris {
                 avgFitness = indivs.Average(ind => ind.Fitness);
                 Console.Write($" - Avg fitness: {avgFitness:N3}, variety: {indivs.AvgVariety():N3}, time {Environment.TickCount - t}Ms");
                 genIndx++;
-            } while(avgFitness < 0.95);
+            } while(avgFitness < 0.94);
 
             Console.Write($"\n\nDone in {Environment.TickCount - startT}Ms");
             Console.ReadKey();
