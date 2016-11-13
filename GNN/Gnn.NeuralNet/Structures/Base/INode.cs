@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 namespace Gnn.NeuralNet.Structures.Base {
 
     public interface INode {
+
+        event Action OutputChanged;
+
         float Output { get; }
     }
 }

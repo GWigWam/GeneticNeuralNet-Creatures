@@ -10,7 +10,20 @@ namespace Gnn.NeuralNet.Structures {
     public class Weight : INode {
         internal const float DefValue = 0;
 
-        public float Value { get; set; }
+        public event Action OutputChanged;
+
+        private float val;
+
+        public float Value {
+            get { return val; }
+            set {
+                if(val != value) {
+                    val = value;
+                    OutputChanged?.Invoke();
+                }
+            }
+        }
+
         public INode Alter { get; protected set; }
 
         public float Output => Alter.Output * Value;
@@ -18,6 +31,8 @@ namespace Gnn.NeuralNet.Structures {
         public Weight(INode alter, float value = DefValue) {
             Alter = alter;
             Value = value;
+
+            Alter.OutputChanged += () => OutputChanged?.Invoke();
         }
 
         public static Weight Weigh(INode alter, float value = DefValue) {

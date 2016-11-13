@@ -8,10 +8,14 @@ using System.Threading.Tasks;
 namespace Gnn.NeuralNet.Structures {
 
     public class Constant : INode {
+
+        public event Action OutputChanged;
+
         public float Output { get; }
 
         public Constant(float value) {
             Output = value;
+            OutputChanged?.Invoke();
         }
     }
 }

@@ -8,7 +8,20 @@ using System.Threading.Tasks;
 namespace Gnn.NeuralNet.Structures {
 
     public class Variable : INode {
-        public float Value { get; set; }
+
+        public event Action OutputChanged;
+
+        private float val;
+
+        public float Value {
+            get { return val; }
+            set {
+                if(val != value) {
+                    val = value;
+                    OutputChanged?.Invoke();
+                }
+            }
+        }
 
         public float Output => Value;
 
