@@ -10,9 +10,11 @@ namespace Gnn.Visual {
 
     public class MainGameContent {
         public SpriteFont Consolas { get; private set; }
+        public Texture2D Test { get; private set; }
 
         public void Init(ContentManager content) {
             Consolas = content.Load<SpriteFont>("Consolas");
+            Test = content.Load<Texture2D>("test");
         }
     }
 }

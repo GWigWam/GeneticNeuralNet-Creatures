@@ -50,7 +50,7 @@ namespace Gnn.Iris {
 
         private static IEnumerable<Network> GenerateNetworks() {
             for(int n = 0; n < NetworkCount; n++) {
-                yield return Network.Create(Transfer, true, 4, 3);
+                yield return Network.Create(Transfer, true, 4, 3, 2);
             }
         }
 

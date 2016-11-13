@@ -29,6 +29,15 @@ namespace Gnn.Visual {
 
             Window.IsBorderless = false;
             Window.Title = "GNN";
+
+            Window.AllowUserResizing = true;
+            Window.ClientSizeChanged += (s1, a1) => {
+                if(graphics.PreferredBackBufferWidth != Window.ClientBounds.Width || graphics.PreferredBackBufferHeight != Window.ClientBounds.Height) {
+                    graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
+                    graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
+                    graphics.ApplyChanges();
+                }
+            };
         }
 
         /// <summary>
@@ -84,6 +93,8 @@ namespace Gnn.Visual {
             spriteBatch.Begin();
 
             DrawFps(gameTime, spriteBatch);
+
+            spriteBatch.Draw(Res.Test, new Rectangle(100, 100, 150, 150), null, Color.White, 0.1f, new Vector2(), SpriteEffects.None, 1f);
 
             spriteBatch.End();
             base.Draw(gameTime);
