@@ -117,13 +117,6 @@ namespace Gnn.Visual {
 
             DrawFps(gameTime, spriteBatch);
 
-            var pos = new Rectangle(1280 / 2, 768 / 2, 128, 128);
-
-            var rot = (float)(((Environment.TickCount % 10000) / 10000.0f) * (Math.PI * 2.0f));
-
-            //spriteBatch.Draw(Res.Test, pos, null, Color.White, rot, /*new Vector2(pos.Center.X, pos.Center.Y)*/ new Vector2(pos.Width / 2.0f, pos.Height / 2.0f), SpriteEffects.None, 0f);
-            spriteBatch.DrawString(Res.FConsolas, $"{rot}", new Vector2(0, 10), Color.Black);
-
             foreach(var c in Test) {
                 c.Draw(spriteBatch);
             }
