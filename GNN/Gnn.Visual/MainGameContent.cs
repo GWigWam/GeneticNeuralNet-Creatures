@@ -9,12 +9,14 @@ using System.Threading.Tasks;
 namespace Gnn.Visual {
 
     public class MainGameContent {
-        public SpriteFont Consolas { get; private set; }
-        public Texture2D Test { get; private set; }
+        public SpriteFont FConsolas { get; private set; }
+        public Texture2D TTest { get; private set; }
+        public Texture2D TCreature { get; private set; }
 
         public void Init(ContentManager content) {
-            Consolas = content.Load<SpriteFont>("Consolas");
-            Test = content.Load<Texture2D>("test");
+            FConsolas = content.Load<SpriteFont>("Consolas");
+            TTest = content.Load<Texture2D>("test");
+            TCreature = content.Load<Texture2D>("Creature");
         }
     }
 }
