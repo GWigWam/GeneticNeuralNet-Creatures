@@ -14,10 +14,10 @@ namespace Gnn.Visual.GameObjects {
         public int Radius { get; }
         public int Diameter { get; }
 
-        public override int TopLeftX => (int)Math.Round(CenterPosition.X - Radius);
-        public override int TopLeftY => (int)Math.Round(CenterPosition.Y - Radius);
+        public override int DrawX => (int)Math.Round(CenterPosition.X);
+        public override int DrawY => (int)Math.Round(CenterPosition.Y);
 
-        public GameObject(Texture2D texture, Vector2 centerPosition, int? radius = null) : base(texture) {
+        public GameObject(Texture2D texture, Vector2 centerPosition, int? radius = null) : base(texture, DrawableOrigin.Center) {
             Radius = radius ?? (int)Math.Round(texture.Width / 2.0);
             Diameter = Radius * 2;
             CenterPosition = centerPosition;
