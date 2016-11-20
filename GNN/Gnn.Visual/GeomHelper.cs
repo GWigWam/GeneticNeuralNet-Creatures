@@ -74,6 +74,7 @@ namespace Gnn.Visual {
             var prjctionLength = (float)(startToCircleLength * Math.Cos(angle));
 
             prjctionLength = prjctionLength > lineLength ? lineLength : prjctionLength;
+            prjctionLength = prjctionLength < 0 ? 0 : prjctionLength;
 
             var v = lineEnd - lineStart;
             var u = v / v.Magnitude();
