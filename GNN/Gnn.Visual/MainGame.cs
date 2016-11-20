@@ -12,6 +12,8 @@ namespace Gnn.Visual {
 
         private MainGameContent Res { get; set; }
 
+        private Random random = new Random(4);
+
         #region FPS counter
         private int CurSecondNr = -1;
         private int CurFrameCount = 1;
@@ -52,6 +54,7 @@ namespace Gnn.Visual {
         /// </summary>
         protected override void Initialize() {
             Res = new MainGameContent();
+            DrawHelper.Init(GraphicsDevice);
 
             base.Initialize();
         }

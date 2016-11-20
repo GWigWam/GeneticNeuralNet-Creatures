@@ -43,6 +43,7 @@
     </StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DrawHelper.cs" />
     <Compile Include="GeomHelper.cs" />
     <Compile Include="GameObjects\Creature.cs" />
     <Compile Include="GameObjects\Drawable.cs" />
