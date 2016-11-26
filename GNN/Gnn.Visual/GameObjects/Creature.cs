@@ -29,9 +29,16 @@ namespace Gnn.Visual.GameObjects {
             CenterPosition = GeomHelper.GetRelative(CenterPosition, Rotation, DistancePerTick);
         }
 
-        public override void Interact(GameObject[] gameObjs) {
+        public override void Interact(IEnumerable<GameObject> gameObjs) {
             var notMe = gameObjs.Where(g => g != this);
             SetVisionInputs(notMe);
+        }
+
+        public override void Draw(SpriteBatch sb) {
+            float r = Helpers.MathHelper.ShiftRange(Brain.Input[0].Value, -2, 2, 0, 1);
+            var col = new Color(r, r, r);
+            DrawHelper.DrawLine(sb, CenterPosition, GeomHelper.GetRelative(CenterPosition, Rotation, VisionDistance), 1, col);
+            base.Draw(sb);
         }
 
         private void SetVisionInputs(IEnumerable<GameObject> gameObjs) {

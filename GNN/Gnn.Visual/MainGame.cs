@@ -13,14 +13,13 @@ namespace Gnn.Visual {
         private MainGameContent Res { get; set; }
         private Random random = new Random(4);
         private Cam2D Cam { get; set; }
+        private World World { get; }
 
         #region FPS counter
         private int CurSecondNr = -1;
         private int CurFrameCount = 1;
         private int FPS = -1;
         #endregion FPS counter
-
-        private Creature[] Test;
 
         public MainGame() {
             graphics = new GraphicsDeviceManager(this) {
@@ -44,6 +43,8 @@ namespace Gnn.Visual {
                     graphics.ApplyChanges();
                 }
             };
+
+            World = new World();
         }
 
         /// <summary>
@@ -69,18 +70,7 @@ namespace Gnn.Visual {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Res.Init(Content);
-
-            Test = new Creature[] {
-                new Creature(Res.TCreature, new Vector2(300, 300), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()) { /*Position = new Rectangle(100, 100, 32, 32)*/ },
-                new Creature(Res.TCreature, new Vector2(300, 400), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()) { /*Position = new Rectangle(100, 100, 32, 32)*/ },
-                new Creature(Res.TCreature, new Vector2(300, 500), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()) { /*Position = new Rectangle(100, 100, 32, 32)*/ },
-                new Creature(Res.TCreature, new Vector2(400, 300), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()) { /*Position = new Rectangle(100, 100, 32, 32)*/ },
-                new Creature(Res.TCreature, new Vector2(400, 400), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()) { /*Position = new Rectangle(100, 100, 32, 32)*/ },
-                new Creature(Res.TCreature, new Vector2(400, 500), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()) { /*Position = new Rectangle(100, 100, 32, 32)*/ },
-                new Creature(Res.TCreature, new Vector2(500, 300), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()) { /*Position = new Rectangle(100, 100, 32, 32)*/ },
-                new Creature(Res.TCreature, new Vector2(500, 400), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()) { /*Position = new Rectangle(100, 100, 32, 32)*/ },
-                new Creature(Res.TCreature, new Vector2(500, 500), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()) { /*Position = new Rectangle(100, 100, 32, 32)*/ },
-            };
+            World.Initialize(Res);
         }
 
         /// <summary>
@@ -105,13 +95,9 @@ namespace Gnn.Visual {
             }
 
             Cam.Move(mState, kState);
+            var mPosRelative = Vector2.Transform(mState.Position.ToVector2(), Matrix.Invert(Cam.Transform)).ToPoint();
 
-            foreach(var c in Test) {
-                c.Move();
-            }
-            foreach(var c in Test) {
-                c.Interact(Test);
-            }
+            World.Update(mState, kState, mPosRelative);
 
             base.Update(gameTime);
         }
@@ -139,9 +125,7 @@ namespace Gnn.Visual {
         }
 
         private void DrawRelative(GameTime gameTime) {
-            foreach(var c in Test) {
-                c.Draw(spriteBatch);
-            }
+            World.Draw(spriteBatch);
         }
 
         private void DrawFps(GameTime gt) {

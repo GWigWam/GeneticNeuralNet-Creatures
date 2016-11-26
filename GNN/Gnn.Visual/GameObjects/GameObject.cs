@@ -25,6 +25,6 @@ namespace Gnn.Visual.GameObjects {
 
         public abstract void Move();
 
-        public abstract void Interact(GameObject[] gameObjs);
+        public abstract void Interact(IEnumerable<GameObject> gameObjs);
     }
 }
