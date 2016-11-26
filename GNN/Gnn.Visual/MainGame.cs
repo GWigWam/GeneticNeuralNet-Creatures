@@ -104,7 +104,7 @@ namespace Gnn.Visual {
                 Exit();
             }
 
-            Cam.Move(mState);
+            Cam.Move(mState, kState);
 
             foreach(var c in Test) {
                 c.Move();
@@ -135,7 +135,7 @@ namespace Gnn.Visual {
         }
 
         private void DrawStatic(GameTime gameTime) {
-            DrawFps(gameTime, spriteBatch);
+            DrawFps(gameTime);
         }
 
         private void DrawRelative(GameTime gameTime) {
@@ -144,7 +144,7 @@ namespace Gnn.Visual {
             }
         }
 
-        private void DrawFps(GameTime gt, SpriteBatch sb) {
+        private void DrawFps(GameTime gt) {
             if(gt.TotalGameTime.Seconds == CurSecondNr) {
                 CurFrameCount++;
             } else {
@@ -155,7 +155,7 @@ namespace Gnn.Visual {
 
             var col = FPS >= 59 ? Color.Black : Color.DarkRed;
 
-            sb.DrawString(Res.FConsolas, $"{FPS} FPS", Vector2.Zero, col);
+            spriteBatch.DrawString(Res.FConsolas, $"{FPS} FPS", Vector2.Zero, col);
         }
     }
 }

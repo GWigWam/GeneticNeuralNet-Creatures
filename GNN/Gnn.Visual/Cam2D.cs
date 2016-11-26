@@ -5,7 +5,7 @@ namespace Gnn.Visual {
 
     public class Cam2D {
         private bool clicked = false;
-        private Vector2 clickPos;
+        private Point lastClickPos;
         private int previousScrollValue = 0;
 
         public Point Center;
@@ -16,6 +16,12 @@ namespace Gnn.Visual {
             set { zoom = value <= 0 ? 0.01f : value; }
         }
 
+        private float rotation = 0;
+        public float Rotation {
+            get { return rotation; }
+            set { rotation = value % MathHelper.TwoPi; }
+        }
+
         public int ViewWidth { get; set; }
         public int ViewHeight { get; set; }
 
@@ -23,6 +29,7 @@ namespace Gnn.Visual {
             get {
                 return
                     Matrix.CreateTranslation(new Vector3(-Center.X, -Center.Y, 0)) *
+                    Matrix.CreateRotationZ(Rotation) *
                     Matrix.CreateScale(Zoom) *
                     Matrix.CreateTranslation(new Vector3(ViewWidth * 0.5f, ViewHeight * 0.5f, 0));
             }
@@ -34,20 +41,16 @@ namespace Gnn.Visual {
             Center = centerPos ?? new Point(ViewWidth / 2, ViewHeight / 2);
         }
 
-        public void Move(MouseState mState) {
+        public void Move(MouseState mState, KeyboardState kState) {
+            var mouseTransformed = Vector2.Transform(mState.Position.ToVector2(), Matrix.Invert(Transform)).ToPoint();
+
             if(!clicked && mState.LeftButton == ButtonState.Pressed) {
-                clickPos = new Vector2(mState.X, mState.Y);
+                lastClickPos = mouseTransformed;
                 clicked = true;
             }
 
             if(clicked) {
-                int xMovement = (int)((clickPos.X - mState.X) / Zoom);
-                int yMovement = (int)((clickPos.Y - mState.Y) / Zoom);
-
-                Center.X += xMovement;
-                Center.Y += yMovement;
-
-                clickPos = new Vector2(mState.X, mState.Y);
+                Center += (lastClickPos - mouseTransformed);
 
                 if(mState.LeftButton == ButtonState.Released) {
                     clicked = false;
@@ -55,11 +58,25 @@ namespace Gnn.Visual {
             }
 
             if(mState.ScrollWheelValue < previousScrollValue) {
-                Zoom *= 0.8f;
+                if(kState.IsKeyDown(Keys.LeftControl) || kState.IsKeyDown(Keys.RightControl)) {
+                    Rotation += 0.5f;
+                } else {
+                    Zoom *= 0.8f;
+                }
                 previousScrollValue = mState.ScrollWheelValue;
             } else if(mState.ScrollWheelValue > previousScrollValue) {
-                Zoom *= 1.25f;
+                if(kState.IsKeyDown(Keys.LeftControl) || kState.IsKeyDown(Keys.RightControl)) {
+                    Rotation -= 0.5f;
+                } else {
+                    Zoom *= 1.25f;
+                }
                 previousScrollValue = mState.ScrollWheelValue;
+            }
+
+            if(kState.IsKeyDown(Keys.Space) && kState.IsKeyDown(Keys.LeftControl)) {
+                Rotation = 0;
+                Zoom = 1;
+                Center = new Point(ViewWidth / 2, ViewHeight / 2);
             }
         }
     }
