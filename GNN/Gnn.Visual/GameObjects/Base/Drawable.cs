@@ -20,7 +20,7 @@ namespace Gnn.Visual.GameObjects.Base {
             }
         }
 
-        private Vector2 Origin { get; }
+        protected Vector2 Origin { get; }
 
         public abstract int DrawX { get; }
         public abstract int DrawY { get; }

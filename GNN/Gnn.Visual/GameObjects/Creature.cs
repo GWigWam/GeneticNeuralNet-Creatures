@@ -18,7 +18,7 @@ namespace Gnn.Visual.GameObjects {
 
         public Network Brain { get; }
 
-        public Creature(Texture2D texture, Vector2 position) : base(texture, position) {
+        public Creature(MainGameContent res, Vector2 position) : base(res.TCreature, position) {
             Brain = Network.Create(HyperbolicTangentFunction.Instance, true, 1, 1, 1);
         }
 

@@ -19,16 +19,17 @@ namespace Gnn.Visual {
         }
 
         public void Initialize(MainGameContent res) {
-            GameObjs.AddRange(new Creature[] {
-                new Creature(res.TCreature, new Vector2(300, 300)),
-                new Creature(res.TCreature, new Vector2(300, 400)),
-                new Creature(res.TCreature, new Vector2(300, 500)),
-                new Creature(res.TCreature, new Vector2(400, 300)),
-                new Creature(res.TCreature, new Vector2(400, 400)),
-                new Creature(res.TCreature, new Vector2(400, 500)),
-                new Creature(res.TCreature, new Vector2(500, 300)),
-                new Creature(res.TCreature, new Vector2(500, 400)),
-                new Creature(res.TCreature, new Vector2(500, 500)),
+            GameObjs.AddRange(new GameObject[] {
+                new Creature(res, new Vector2(300, 300)),
+                new Creature(res, new Vector2(300, 400)),
+                new Creature(res, new Vector2(300, 500)),
+                new Creature(res, new Vector2(400, 300)),
+                new Creature(res, new Vector2(400, 400)),
+                new Creature(res, new Vector2(400, 500)),
+                new Creature(res, new Vector2(500, 300)),
+                new Creature(res, new Vector2(500, 400)),
+                new Creature(res, new Vector2(500, 500)),
+                new Food(res, Vector2.Zero)
             });
         }
 
