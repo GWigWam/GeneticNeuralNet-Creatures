@@ -11,8 +11,8 @@ namespace Gnn.Visual {
         private SpriteBatch spriteBatch;
 
         private MainGameContent Res { get; set; }
-
         private Random random = new Random(4);
+        private Cam2D Cam { get; set; }
 
         #region FPS counter
         private int CurSecondNr = -1;
@@ -55,6 +55,7 @@ namespace Gnn.Visual {
         protected override void Initialize() {
             Res = new MainGameContent();
             DrawHelper.Init(GraphicsDevice);
+            Cam = new Cam2D(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
             base.Initialize();
         }
@@ -96,9 +97,14 @@ namespace Gnn.Visual {
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime) {
-            if(Keyboard.GetState().IsKeyDown(Keys.Escape)) {
+            var mState = Mouse.GetState();
+            var kState = Keyboard.GetState();
+
+            if(kState.IsKeyDown(Keys.Escape)) {
                 Exit();
             }
+
+            Cam.Move(mState);
 
             foreach(var c in Test) {
                 c.Move();
@@ -116,16 +122,26 @@ namespace Gnn.Visual {
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime) {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
             spriteBatch.Begin();
+            DrawStatic(gameTime);
+            spriteBatch.End();
 
+            spriteBatch.Begin(transformMatrix: Cam.Transform);
+            DrawRelative(gameTime);
+            spriteBatch.End();
+
+            base.Draw(gameTime);
+        }
+
+        private void DrawStatic(GameTime gameTime) {
             DrawFps(gameTime, spriteBatch);
+        }
 
+        private void DrawRelative(GameTime gameTime) {
             foreach(var c in Test) {
                 c.Draw(spriteBatch);
             }
-
-            spriteBatch.End();
-            base.Draw(gameTime);
         }
 
         private void DrawFps(GameTime gt, SpriteBatch sb) {
@@ -137,7 +153,9 @@ namespace Gnn.Visual {
                 CurFrameCount = 1;
             }
 
-            sb.DrawString(Res.FConsolas, $"{FPS} FPS", new Vector2(0, 0), Color.Black);
+            var col = FPS >= 59 ? Color.Black : Color.DarkRed;
+
+            sb.DrawString(Res.FConsolas, $"{FPS} FPS", Vector2.Zero, col);
         }
     }
 }
