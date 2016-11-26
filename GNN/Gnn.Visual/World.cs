@@ -1,4 +1,5 @@
 ﻿using Gnn.Visual.GameObjects;
+using Gnn.Visual.GameObjects.Base;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 namespace Gnn.Visual {
 
     public class World {
-        private List<GameObject> GameObjs;
+        public List<GameObject> GameObjs { get; }
 
         public World() {
             GameObjs = new List<GameObject>();
@@ -19,15 +20,15 @@ namespace Gnn.Visual {
 
         public void Initialize(MainGameContent res) {
             GameObjs.AddRange(new Creature[] {
-                new Creature(res.TCreature, new Vector2(300, 300), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()),
-                new Creature(res.TCreature, new Vector2(300, 400), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()),
-                new Creature(res.TCreature, new Vector2(300, 500), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()),
-                new Creature(res.TCreature, new Vector2(400, 300), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()),
-                new Creature(res.TCreature, new Vector2(400, 400), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()),
-                new Creature(res.TCreature, new Vector2(400, 500), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()),
-                new Creature(res.TCreature, new Vector2(500, 300), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()),
-                new Creature(res.TCreature, new Vector2(500, 400), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()),
-                new Creature(res.TCreature, new Vector2(500, 500), new NeuralNet.Structures.TransferFunctions.HyperbolicTangentFunction()),
+                new Creature(res.TCreature, new Vector2(300, 300)),
+                new Creature(res.TCreature, new Vector2(300, 400)),
+                new Creature(res.TCreature, new Vector2(300, 500)),
+                new Creature(res.TCreature, new Vector2(400, 300)),
+                new Creature(res.TCreature, new Vector2(400, 400)),
+                new Creature(res.TCreature, new Vector2(400, 500)),
+                new Creature(res.TCreature, new Vector2(500, 300)),
+                new Creature(res.TCreature, new Vector2(500, 400)),
+                new Creature(res.TCreature, new Vector2(500, 500)),
             });
         }
 

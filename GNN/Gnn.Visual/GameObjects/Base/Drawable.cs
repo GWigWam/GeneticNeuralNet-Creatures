@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Gnn.Visual.GameObjects {
+namespace Gnn.Visual.GameObjects.Base {
 
     public abstract class Drawable {
         public virtual Texture2D Texture { get; set; }

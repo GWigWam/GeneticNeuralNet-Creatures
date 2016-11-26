@@ -1,5 +1,6 @@
 ﻿using Gnn.NeuralNet;
 using Gnn.NeuralNet.Structures.TransferFunctions;
+using Gnn.Visual.GameObjects.Base;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -17,8 +18,8 @@ namespace Gnn.Visual.GameObjects {
 
         public Network Brain { get; }
 
-        public Creature(Texture2D texture, Vector2 position, TransferFunction transfer) : base(texture, position) {
-            Brain = Network.Create(transfer, true, 1, 1, 1);
+        public Creature(Texture2D texture, Vector2 position) : base(texture, position) {
+            Brain = Network.Create(HyperbolicTangentFunction.Instance, true, 1, 1, 1);
         }
 
         public override void Move() {

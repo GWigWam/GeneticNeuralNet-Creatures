@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Gnn.Visual.GameObjects {
+namespace Gnn.Visual.GameObjects.Base {
 
     public abstract class GameObject : Drawable {
         public Vector2 CenterPosition { get; set; }

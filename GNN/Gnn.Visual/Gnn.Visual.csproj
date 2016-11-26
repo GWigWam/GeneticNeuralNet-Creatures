@@ -46,8 +46,8 @@
     <Compile Include="DrawHelper.cs" />
     <Compile Include="GeomHelper.cs" />
     <Compile Include="GameObjects\Creature.cs" />
-    <Compile Include="GameObjects\Drawable.cs" />
-    <Compile Include="GameObjects\GameObject.cs" />
+    <Compile Include="GameObjects\Base\Drawable.cs" />
+    <Compile Include="GameObjects\Base\GameObject.cs" />
     <Compile Include="MainGame.cs" />
     <Compile Include="MainGameContent.cs" />
     <Compile Include="Program.cs" />
