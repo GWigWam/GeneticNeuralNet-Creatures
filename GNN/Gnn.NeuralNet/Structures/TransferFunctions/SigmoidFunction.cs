@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 namespace Gnn.NeuralNet.Structures.TransferFunctions {
 
     public class SigmoidFunction : TransferFunction {
+        public static SigmoidFunction Instance = new SigmoidFunction();
+
         public override float XMax => 4;
         public override float XMin => -4;
         public override float YMax => 1;

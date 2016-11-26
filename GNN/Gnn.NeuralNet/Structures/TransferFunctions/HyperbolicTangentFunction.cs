@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 namespace Gnn.NeuralNet.Structures.TransferFunctions {
 
     public class HyperbolicTangentFunction : TransferFunction {
+        public static HyperbolicTangentFunction Instance = new HyperbolicTangentFunction();
+
         public override float XMax => 2;
         public override float XMin => -2;
         public override float YMax => 1;
