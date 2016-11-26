@@ -17,5 +17,9 @@ namespace Gnn.NeuralNet.Structures.TransferFunctions {
         public float SumCalculate(IEnumerable<float> input) => Calculate(input.Sum());
 
         public abstract float Calculate(float input);
+
+        public float ShiftRange(float input, float sourceMin, float sourceMax) {
+            return Helpers.MathHelper.ShiftRange(input, sourceMin, sourceMax, XMin, XMax);
+        }
     }
 }
