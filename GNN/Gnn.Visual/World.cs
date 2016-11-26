@@ -33,12 +33,12 @@ namespace Gnn.Visual {
             });
         }
 
-        public void Update(MouseState mState, KeyboardState kState, Point mPosInWorld) {
+        public void Update(MouseState mState, KeyboardState kState, Point mPosInWorld, float secsPassed) {
             foreach(var c in GameObjs) {
-                c.Move();
+                c.Move(secsPassed);
             }
             foreach(var c in GameObjs) {
-                c.Interact(GameObjs);
+                c.Interact(GameObjs, secsPassed);
             }
         }
 

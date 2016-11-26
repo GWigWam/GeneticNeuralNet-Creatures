@@ -14,7 +14,7 @@ namespace Gnn.Visual.GameObjects {
     public class Creature : GameObject {
         public const int VisionDistance = 100;
         public const float MaxRotPerTick = (float)(MathHelper.TwoPi / 50.0);
-        public const float DistancePerTick = 5;
+        public const float DistancePerSecond = 300;
 
         public Network Brain { get; }
 
@@ -22,15 +22,15 @@ namespace Gnn.Visual.GameObjects {
             Brain = Network.Create(HyperbolicTangentFunction.Instance, true, 1, 1, 1);
         }
 
-        public override void Move() {
+        public override void Move(float secsPassed) {
             var outp = Brain.Output[0].Output;
             var rotChange = Helpers.MathHelper.ShiftRange(outp, Brain.Transfer.YMin, Brain.Transfer.YMax, -MaxRotPerTick, MaxRotPerTick);
             Rotation += rotChange;
 
-            CenterPosition = GeomHelper.GetRelative(CenterPosition, Rotation, DistancePerTick);
+            CenterPosition = GeomHelper.GetRelative(CenterPosition, Rotation, DistancePerSecond * secsPassed);
         }
 
-        public override void Interact(IEnumerable<GameObject> gameObjs) {
+        public override void Interact(IEnumerable<GameObject> gameObjs, float secsPassed) {
             var notMe = gameObjs.Where(g => g != this);
             SetVisionInputs(notMe);
         }

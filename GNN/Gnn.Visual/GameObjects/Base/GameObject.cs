@@ -23,8 +23,8 @@ namespace Gnn.Visual.GameObjects.Base {
             CenterPosition = centerPosition;
         }
 
-        public abstract void Move();
+        public abstract void Move(float secsPassed);
 
-        public abstract void Interact(IEnumerable<GameObject> gameObjs);
+        public abstract void Interact(IEnumerable<GameObject> gameObjs, float secsPassed);
     }
 }

@@ -97,7 +97,7 @@ namespace Gnn.Visual {
             Cam.Move(mState, kState);
             var mPosRelative = Vector2.Transform(mState.Position.ToVector2(), Matrix.Invert(Cam.Transform)).ToPoint();
 
-            World.Update(mState, kState, mPosRelative);
+            World.Update(mState, kState, mPosRelative, (float)gameTime.ElapsedGameTime.TotalSeconds);
 
             base.Update(gameTime);
         }

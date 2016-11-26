@@ -20,12 +20,12 @@ namespace Gnn.Visual.GameObjects {
         public Food(MainGameContent res, Vector2 position) : base(res.TFood, position) {
         }
 
-        public override void Interact(IEnumerable<GameObject> gameObjs) {
-            Health += 0.001f;
+        public override void Interact(IEnumerable<GameObject> gameObjs, float secsPassed) {
+            Health += (1f / 3f) * secsPassed;
         }
 
-        public override void Move() {
-            Rotation += (0.01f * health);
+        public override void Move(float secsPassed) {
+            Rotation += (1f * health) * secsPassed;
         }
 
         public override void Draw(SpriteBatch sb) {
