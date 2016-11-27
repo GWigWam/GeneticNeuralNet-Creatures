@@ -22,9 +22,9 @@ namespace Gnn.Visual.GameObjects {
 
         private Vision Eyes;
 
-        public Creature(MainGameContent res, Vector2 position, int eyeCount = DefEyeCount) : base(res.TCreature, position) {
+        public Creature(World world, MainGameContent res, Vector2 position, int eyeCount = DefEyeCount) : base(world, res.TCreature, position) {
             Eyes = new Vision(this, eyeCount);
-            Brain = Network.Create(HyperbolicTangentFunction.Instance, true, Eyes.Count * 3, (int)(Eyes.Count / 1.5), 1);
+            Brain = Network.Create(HyperbolicTangentFunction.Instance, true, Eyes.Count * 3, 1, (int)(Eyes.Count / 1.5));
         }
 
         public override void Move(float secsPassed) {
@@ -35,8 +35,8 @@ namespace Gnn.Visual.GameObjects {
             CenterPosition = GeomHelper.GetRelative(CenterPosition, Rotation, DistancePerSecond * secsPassed);
         }
 
-        public override void Interact(IEnumerable<GameObject> gameObjs, float secsPassed) {
-            var notMe = gameObjs.Where(g => g != this);
+        public override void Interact(float secsPassed) {
+            var notMe = World.GameObjs.Where(g => g != this);
             Eyes.Update(notMe);
 
             for(int e = 0; e < Eyes.Count; e++) {

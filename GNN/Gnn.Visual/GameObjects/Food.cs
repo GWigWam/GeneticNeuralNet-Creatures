@@ -19,10 +19,10 @@ namespace Gnn.Visual.GameObjects {
 
         public Vector2 Color => new Vector2(0, health);
 
-        public Food(MainGameContent res, Vector2 position) : base(res.TFood, position) {
+        public Food(World world, MainGameContent res, Vector2 position) : base(world, res.TFood, position) {
         }
 
-        public override void Interact(IEnumerable<GameObject> gameObjs, float secsPassed) {
+        public override void Interact(float secsPassed) {
             Health += (1f / 3f) * secsPassed;
         }
 

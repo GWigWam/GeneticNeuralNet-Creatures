@@ -14,10 +14,13 @@ namespace Gnn.Visual.GameObjects.Base {
         public int Radius { get; }
         public int Diameter { get; }
 
+        public World World { get; }
+
         public override int DrawX => (int)Math.Round(CenterPosition.X);
         public override int DrawY => (int)Math.Round(CenterPosition.Y);
 
-        public GameObject(Texture2D texture, Vector2 centerPosition, int? radius = null) : base(texture, DrawableOrigin.Center) {
+        public GameObject(World world, Texture2D texture, Vector2 centerPosition, int? radius = null) : base(texture, DrawableOrigin.Center) {
+            World = world;
             Radius = radius ?? (int)Math.Round(texture.Width / 2.0);
             Diameter = Radius * 2;
             CenterPosition = centerPosition;
@@ -25,6 +28,6 @@ namespace Gnn.Visual.GameObjects.Base {
 
         public abstract void Move(float secsPassed);
 
-        public abstract void Interact(IEnumerable<GameObject> gameObjs, float secsPassed);
+        public abstract void Interact(float secsPassed);
     }
 }

@@ -96,5 +96,11 @@ namespace Gnn.Visual {
         public static float Magnitude(this Vector2 vect) {
             return (float)Math.Sqrt(Math.Pow(vect.X, 2) + Math.Pow(vect.Y, 2));
         }
+
+        public static Vector2 RandomPointInCircel(Random random, float radius) {
+            var r = Math.Sqrt((float)random.Next() / int.MaxValue) * radius;
+            var theta = ((double)random.Next() / int.MaxValue * 2.0 * Math.PI);
+            return new Vector2((float)(r * Math.Cos(theta)), (float)(r * Math.Sin(theta)));
+        }
     }
 }

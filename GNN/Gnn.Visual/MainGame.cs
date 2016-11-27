@@ -10,8 +10,6 @@ namespace Gnn.Visual {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
-        private MainGameContent Res { get; set; }
-        private Random random = new Random(4);
         private Cam2D Cam { get; set; }
         private World World { get; }
 
@@ -20,6 +18,9 @@ namespace Gnn.Visual {
         private int CurFrameCount = 1;
         private int FPS = -1;
         #endregion FPS counter
+
+        public MainGameContent Res { get; private set; }
+        public Random Rand = new Random(4);
 
         public MainGame() {
             graphics = new GraphicsDeviceManager(this) {
@@ -44,7 +45,7 @@ namespace Gnn.Visual {
                 }
             };
 
-            World = new World();
+            World = new World(this);
         }
 
         /// <summary>
@@ -70,7 +71,7 @@ namespace Gnn.Visual {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Res.Init(Content);
-            World.Initialize(Res);
+            World.Initialize();
         }
 
         /// <summary>
@@ -97,7 +98,7 @@ namespace Gnn.Visual {
             Cam.Move(mState, kState);
             var mPosRelative = Vector2.Transform(mState.Position.ToVector2(), Matrix.Invert(Cam.Transform)).ToPoint();
 
-            World.Update(mState, kState, mPosRelative, (float)gameTime.ElapsedGameTime.TotalSeconds);
+            World.Update(mState, kState, mPosRelative, (float)gameTime.ElapsedGameTime.TotalSeconds / 1.0f);
 
             base.Update(gameTime);
         }

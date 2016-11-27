@@ -12,33 +12,20 @@ using System.Threading.Tasks;
 namespace Gnn.Visual {
 
     public class World {
+        public const int CreatureCount = 450;
+        public const int WorldSize = 4000;
+
         public List<GameObject> GameObjs { get; }
 
-        public World() {
+        private MainGame Game { get; }
+
+        public World(MainGame game) {
+            Game = game;
             GameObjs = new List<GameObject>();
         }
 
-        public void Initialize(MainGameContent res) {
-            GameObjs.AddRange(new GameObject[] {
-                new Creature(res, new Vector2(300, 300)),
-                new Creature(res, new Vector2(300, 400)),
-                new Creature(res, new Vector2(300, 500)),
-                new Creature(res, new Vector2(400, 300)),
-                new Creature(res, new Vector2(400, 400)),
-                new Creature(res, new Vector2(400, 500)),
-                new Creature(res, new Vector2(500, 300)),
-                new Creature(res, new Vector2(500, 400)),
-                new Creature(res, new Vector2(500, 500)),
-                new Food(res, new Vector2(300, 300)),
-                new Food(res, new Vector2(300, 400)),
-                new Food(res, new Vector2(300, 500)),
-                new Food(res, new Vector2(400, 300)),
-                new Food(res, new Vector2(400, 400)),
-                new Food(res, new Vector2(400, 500)),
-                new Food(res, new Vector2(500, 300)),
-                new Food(res, new Vector2(500, 400)),
-                new Food(res, new Vector2(500, 500)),
-            });
+        public void Initialize() {
+            Populate();
         }
 
         public void Update(MouseState mState, KeyboardState kState, Point mPosInWorld, float secsPassed) {
@@ -46,13 +33,20 @@ namespace Gnn.Visual {
                 c.Move(secsPassed);
             }
             foreach(var c in GameObjs) {
-                c.Interact(GameObjs, secsPassed);
+                c.Interact(secsPassed);
             }
         }
 
         public void Draw(SpriteBatch sb) {
             foreach(var c in GameObjs) {
                 c.Draw(sb);
+            }
+        }
+
+        private void Populate() {
+            for(int i = 0; i < CreatureCount; i++) {
+                var @new = new Creature(this, Game.Res, GeomHelper.RandomPointInCircel(Game.Rand, WorldSize));
+                GameObjs.Add(@new);
             }
         }
     }
