@@ -10,7 +10,6 @@ namespace Gnn.Visual {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
-        private Cam2D Cam { get; set; }
         private World World { get; }
 
         #region FPS counter
@@ -19,6 +18,7 @@ namespace Gnn.Visual {
         private int FPS = -1;
         #endregion FPS counter
 
+        public Cam2D Cam { get; private set; }
         public MainGameContent Res { get; private set; }
         public Random Rand = new Random(4);
 

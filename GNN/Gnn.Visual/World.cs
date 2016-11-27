@@ -36,7 +36,8 @@ namespace Gnn.Visual {
         }
 
         public void Draw(SpriteBatch sb) {
-            foreach(var c in GameObjs) {
+            var visRect = Game.Cam.VisibleArea;
+            foreach(var c in GameObjs.Where(go => go.DrawRectangle.Intersects(visRect))) {
                 c.Draw(sb);
             }
         }
