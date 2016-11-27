@@ -31,6 +31,8 @@ namespace Gnn.Visual {
         public void Update(MouseState mState, KeyboardState kState, Point mPosInWorld, float secsPassed) {
             Parallel.ForEach(GameObjs, c => c.Move(secsPassed));
             Parallel.ForEach(GameObjs, c => c.Interact(secsPassed));
+
+            GameObjs.RemoveAll(go => !go.Active);
         }
 
         public void Draw(SpriteBatch sb) {

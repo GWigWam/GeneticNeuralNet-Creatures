@@ -15,10 +15,13 @@ namespace Gnn.Visual.GameObjects {
         public const float MaxRotPerSecond = (float)(MathHelper.TwoPi / 2);
         public const float DistancePerSecond = 300;
         private const int DefEyeCount = 5;
+        private const float HealthLossPerSecond = 1f / 30f;
 
         public Network Brain { get; }
 
         public Vector2 Color => new Vector2(1, 0);
+
+        public float Health { get; private set; } = 0.5f;
 
         private Vision Eyes;
 
@@ -48,6 +51,11 @@ namespace Gnn.Visual.GameObjects {
                 Brain.Input[e * 3 + 0].Value = inpR;
                 Brain.Input[e * 3 + 1].Value = inpG;
                 Brain.Input[e * 3 + 2].Value = inpA;
+            }
+
+            Health -= (HealthLossPerSecond * secsPassed);
+            if(Health < 0) {
+                Active = false;
             }
         }
 
