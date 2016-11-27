@@ -16,6 +16,11 @@ namespace Gnn.Visual {
         private int CurSecondNr = -1;
         private int CurFrameCount = 1;
         private int FPS = -1;
+
+        private int UpdateTimeMs = 0;
+        private int DrawTimeMs = 0;
+        private bool IsCpuThrottled = false;
+        private bool IsGpuThrottled = false;
         #endregion FPS counter
 
         public Cam2D Cam { get; private set; }
@@ -88,6 +93,7 @@ namespace Gnn.Visual {
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime) {
+            var startUpdate = Environment.TickCount;
             var mState = Mouse.GetState();
             var kState = Keyboard.GetState();
 
@@ -101,6 +107,7 @@ namespace Gnn.Visual {
             World.Update(mState, kState, mPosRelative, (float)gameTime.ElapsedGameTime.TotalSeconds / 1.0f);
 
             base.Update(gameTime);
+            UpdateTimeMs += (Environment.TickCount - startUpdate);
         }
 
         /// <summary>
@@ -108,6 +115,7 @@ namespace Gnn.Visual {
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime) {
+            var startDraw = Environment.TickCount;
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
@@ -119,6 +127,7 @@ namespace Gnn.Visual {
             spriteBatch.End();
 
             base.Draw(gameTime);
+            DrawTimeMs += (Environment.TickCount - startDraw);
         }
 
         private void DrawStatic(GameTime gameTime) {
@@ -133,14 +142,23 @@ namespace Gnn.Visual {
             if(gt.TotalGameTime.Seconds == CurSecondNr) {
                 CurFrameCount++;
             } else {
+                IsCpuThrottled = UpdateTimeMs / CurFrameCount > 1000f / 60f;
+                IsGpuThrottled = DrawTimeMs / CurFrameCount > 1000f / 60f;
+
                 CurSecondNr = gt.TotalGameTime.Seconds;
                 FPS = CurFrameCount;
                 CurFrameCount = 1;
+                DrawTimeMs = 0;
+                UpdateTimeMs = 0;
             }
 
             var col = FPS >= 59 ? Color.Black : Color.DarkRed;
 
             spriteBatch.DrawString(Res.FConsolas, $"{FPS} FPS", Vector2.Zero, col);
+
+            if(IsCpuThrottled || IsGpuThrottled) {
+                spriteBatch.DrawString(Res.FConsolas, $"{(IsCpuThrottled ? "[CPU] " : string.Empty)}{(IsGpuThrottled ? "[GPU]" : string.Empty)}", new Vector2(0, 10), Color.DarkRed);
+            }
         }
     }
 }
