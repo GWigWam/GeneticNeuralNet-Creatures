@@ -29,12 +29,8 @@ namespace Gnn.Visual {
         }
 
         public void Update(MouseState mState, KeyboardState kState, Point mPosInWorld, float secsPassed) {
-            foreach(var c in GameObjs) {
-                c.Move(secsPassed);
-            }
-            foreach(var c in GameObjs) {
-                c.Interact(secsPassed);
-            }
+            Parallel.ForEach(GameObjs, c => c.Move(secsPassed));
+            Parallel.ForEach(GameObjs, c => c.Interact(secsPassed));
         }
 
         public void Draw(SpriteBatch sb) {
