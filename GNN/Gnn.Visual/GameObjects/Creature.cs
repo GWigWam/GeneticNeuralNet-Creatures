@@ -11,18 +11,20 @@ using System.Threading.Tasks;
 
 namespace Gnn.Visual.GameObjects {
 
-    public class Creature : GameObject {
+    public class Creature : GameObject, IWorldVisible {
         public const float MaxRotPerSecond = (float)(MathHelper.TwoPi / 2);
         public const float DistancePerSecond = 300;
         private const int DefEyeCount = 5;
 
         public Network Brain { get; }
 
+        public Vector2 Color => new Vector2(1, 0);
+
         private Vision Eyes;
 
         public Creature(MainGameContent res, Vector2 position, int eyeCount = DefEyeCount) : base(res.TCreature, position) {
             Eyes = new Vision(this, eyeCount);
-            Brain = Network.Create(HyperbolicTangentFunction.Instance, true, Eyes.Count, Eyes.Count / 2, 1);
+            Brain = Network.Create(HyperbolicTangentFunction.Instance, true, Eyes.Count * 3, (int)(Eyes.Count / 1.5), 1);
         }
 
         public override void Move(float secsPassed) {
@@ -39,9 +41,13 @@ namespace Gnn.Visual.GameObjects {
 
             for(int e = 0; e < Eyes.Count; e++) {
                 var cur = Eyes.Visible[e];
-                var invDistance = Vision.VisionDistance - (cur.Item1 != null ? cur.Item2 : Vision.VisionDistance);
-                var inp = Brain.Transfer.ShiftRange(invDistance, 0, Vision.VisionDistance);
-                Brain.Input[e].Value = inp;
+
+                var inpR = Brain.Transfer.ShiftRange(cur.X, 0, 1);
+                var inpG = Brain.Transfer.ShiftRange(cur.Y, 0, 1);
+                var inpA = Brain.Transfer.ShiftRange(cur.Z, 0, 1);
+                Brain.Input[e * 3 + 0].Value = inpR;
+                Brain.Input[e * 3 + 1].Value = inpG;
+                Brain.Input[e * 3 + 2].Value = inpA;
             }
         }
 
@@ -57,7 +63,7 @@ namespace Gnn.Visual.GameObjects {
             private Creature Owner;
             private float[] EyeAngles;
 
-            public Tuple<GameObject, float>[] Visible { get; private set; }
+            public Vector3[] Visible { get; private set; }
             public Tuple<Vector2, Vector2>[] VisionLines { get; private set; }
 
             public int Count { get; }
@@ -67,7 +73,7 @@ namespace Gnn.Visual.GameObjects {
                 Count = eyeCount;
 
                 EyeAngles = new float[eyeCount];
-                Visible = new Tuple<GameObject, float>[eyeCount];
+                Visible = new Vector3[eyeCount];
                 VisionLines = new Tuple<Vector2, Vector2>[eyeCount];
 
                 int index = 0;
@@ -83,7 +89,7 @@ namespace Gnn.Visual.GameObjects {
                     VisionLines[ei] = curVisLine;
 
                     GameObject closestObj = null;
-                    float closestDst = float.MaxValue;
+                    float closestDst = VisionDistance;
                     foreach(var curGameObj in gameObjs) {
                         var dist = Vector2.Distance(Owner.CenterPosition, curGameObj.CenterPosition) - Owner.Radius - curGameObj.Radius;
                         if(dist < closestDst) {
@@ -94,16 +100,17 @@ namespace Gnn.Visual.GameObjects {
                         }
                     }
 
-                    Visible[ei] = new Tuple<GameObject, float>(closestObj, closestDst);
+                    var col = GetColor(closestObj);
+                    var closeness = 1 - (closestDst / VisionDistance);
+                    Visible[ei] = new Vector3(col.X, col.Y, closeness);
                 }
             }
 
             public void Draw(SpriteBatch sb) {
                 for(int i = 0; i < Count; i++) {
                     var vis = Visible[i];
-                    var distFrac = Helpers.MathHelper.ShiftRange(vis.Item2, 0, VisionDistance, 1, 0);
 
-                    var col = vis.Item1 != null ? new Color(distFrac, distFrac, distFrac) : new Color(0, 0, 0, 0.2f);
+                    var col = new Color(vis.X, vis.Y, 0, vis.Z);
                     DrawHelper.DrawLine(sb, VisionLines[i].Item1, VisionLines[i].Item2, 1, col);
                 }
             }
@@ -112,6 +119,16 @@ namespace Gnn.Visual.GameObjects {
                 var lineStart = GeomHelper.GetRelative(Owner.CenterPosition, angle, Owner.Radius);
                 var lineEnd = GeomHelper.GetRelative(Owner.CenterPosition, angle, VisionDistance + Owner.Radius);
                 return Tuple.Create(lineStart, lineEnd);
+            }
+
+            public static Vector2 GetColor(GameObject go) {
+                if(go == null) {
+                    return Vector2.Zero;
+                } else if(go is IWorldVisible) {
+                    return ((IWorldVisible)go).Color;
+                } else {
+                    return Vector2.One;
+                }
             }
         }
     }
