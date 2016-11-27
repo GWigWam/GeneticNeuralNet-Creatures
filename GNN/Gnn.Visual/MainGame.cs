@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Linq;
 
 namespace Gnn.Visual {
 
@@ -11,6 +12,8 @@ namespace Gnn.Visual {
         private SpriteBatch spriteBatch;
 
         private World World { get; }
+
+        private Keys[] PressedKeys = new Keys[0];
 
         #region FPS counter
         private int CurSecondNr = -1;
@@ -26,6 +29,8 @@ namespace Gnn.Visual {
         public Cam2D Cam { get; private set; }
         public MainGameContent Res { get; private set; }
         public Random Rand = new Random(4);
+
+        public int TicksPerUpdate { get; set; } = 1;
 
         public MainGame() {
             graphics = new GraphicsDeviceManager(this) {
@@ -97,14 +102,14 @@ namespace Gnn.Visual {
             var mState = Mouse.GetState();
             var kState = Keyboard.GetState();
 
-            if(kState.IsKeyDown(Keys.Escape)) {
-                Exit();
-            }
+            HandleInput(mState, kState);
 
             Cam.Move(mState, kState);
             var mPosRelative = Vector2.Transform(mState.Position.ToVector2(), Matrix.Invert(Cam.Transform)).ToPoint();
 
-            World.Update(mState, kState, mPosRelative, (float)gameTime.ElapsedGameTime.TotalSeconds / 1.0f);
+            for(int t = 0; t < TicksPerUpdate; t++) {
+                World.Update(mState, kState, mPosRelative, (float)gameTime.ElapsedGameTime.TotalSeconds / 1.0f);
+            }
 
             base.Update(gameTime);
             UpdateTimeMs += (Environment.TickCount - startUpdate);
@@ -159,6 +164,21 @@ namespace Gnn.Visual {
             if(IsCpuThrottled || IsGpuThrottled) {
                 spriteBatch.DrawString(Res.FConsolas, $"{(IsCpuThrottled ? "[CPU] " : string.Empty)}{(IsGpuThrottled ? "[GPU]" : string.Empty)}", new Vector2(0, 10), Color.DarkRed);
             }
+        }
+
+        private void HandleInput(MouseState mState, KeyboardState kState) {
+            Func<Keys, bool> p = (k) => kState.IsKeyDown(k) && !PressedKeys.Any(prev => prev == k);
+
+            if(p(Keys.Escape)) {
+                Exit();
+            }
+            if(p(Keys.Add)) {
+                TicksPerUpdate++;
+            } else if(p(Keys.Subtract)) {
+                TicksPerUpdate = TicksPerUpdate > 0 ? TicksPerUpdate - 1 : 0;
+            }
+
+            PressedKeys = kState.GetPressedKeys();
         }
     }
 }
