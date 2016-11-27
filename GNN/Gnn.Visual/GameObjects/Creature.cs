@@ -53,6 +53,14 @@ namespace Gnn.Visual.GameObjects {
                 Brain.Input[e * 3 + 2].Value = inpA;
             }
 
+            foreach(var food in World.GameObjs.OfType<Food>()) {
+                var dst = Vector2.Distance(food.CenterPosition, CenterPosition);
+                if(dst < Radius + food.Radius) {
+                    Health += (food.Health * 0.2f);
+                    food.Health = 0;
+                }
+            }
+
             Health -= (HealthLossPerSecond * secsPassed);
             if(Health < 0) {
                 Active = false;

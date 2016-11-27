@@ -12,8 +12,9 @@ using System.Threading.Tasks;
 namespace Gnn.Visual {
 
     public class World {
-        public const int CreatureCount = 450;
-        public const int WorldSize = 4000;
+        public const int CreatureCount = 200;
+        public const int FoodCount = 200;
+        public const int WorldSize = 2000;
 
         public List<GameObject> GameObjs { get; }
 
@@ -45,6 +46,11 @@ namespace Gnn.Visual {
         private void Populate() {
             for(int i = 0; i < CreatureCount; i++) {
                 var @new = new Creature(this, Game.Res, GeomHelper.RandomPointInCircel(Game.Rand, WorldSize));
+                GameObjs.Add(@new);
+            }
+
+            for(int i = 0; i < FoodCount; i++) {
+                var @new = new Food(this, Game.Res, GeomHelper.RandomPointInCircel(Game.Rand, WorldSize));
                 GameObjs.Add(@new);
             }
         }

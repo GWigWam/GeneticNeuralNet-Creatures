@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 namespace Gnn.Visual.GameObjects {
 
     public class Food : GameObject, IWorldVisible {
+        private const float AddHealthPerSecond = 1f / 50f;
+
         private float health;
 
         public float Health {
@@ -23,11 +25,11 @@ namespace Gnn.Visual.GameObjects {
         }
 
         public override void Interact(float secsPassed) {
-            Health += (1f / 3f) * secsPassed;
+            Health += AddHealthPerSecond * secsPassed;
         }
 
         public override void Move(float secsPassed) {
-            Rotation += (1f * health) * secsPassed;
+            Rotation += (0.01f * (float)Math.Pow(health * 100, 1.3)) * secsPassed;
         }
 
         public override void Draw(SpriteBatch sb) {
@@ -35,5 +37,7 @@ namespace Gnn.Visual.GameObjects {
             var col = new Color(rg.X, rg.Y, 0, Health + 0.3f);
             sb.Draw(Texture, new Rectangle(DrawX, DrawY, Texture.Width, Texture.Height), null, col, Rotation, Origin, SpriteEffects.None, 0);
         }
+
+        public void Destory() => Active = false;
     }
 }
