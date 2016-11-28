@@ -21,6 +21,8 @@ namespace Gnn.Visual.GameObjects.Base {
 
         public bool Active { get; protected set; } = true;
 
+        public float Lifespan { get; protected set; }
+
         public GameObject(World world, Texture2D texture, Vector2 centerPosition, int? radius = null) : base(texture, DrawableOrigin.Center) {
             World = world;
             Radius = radius ?? (int)Math.Round(texture.Width / 2.0);
@@ -30,6 +32,8 @@ namespace Gnn.Visual.GameObjects.Base {
 
         public abstract void Move(float secsPassed);
 
-        public abstract void Interact(float secsPassed);
+        public virtual void Interact(float secsPassed) {
+            Lifespan += secsPassed;
+        }
     }
 }

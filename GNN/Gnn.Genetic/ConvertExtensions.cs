@@ -13,10 +13,11 @@ namespace Gnn.Genetic {
             return new Individual(network.Weights.Select(w => w.Value).ToArray(), fitness);
         }
 
-        public static void SetWeights(this Network network, Individual source) {
+        public static Network SetWeights(this Network network, Individual source) {
             for(int i = 0; i < source.Values.Length; i++) {
                 network.Weights[i].Value = source.Values[i];
             }
+            return network;
         }
     }
 }

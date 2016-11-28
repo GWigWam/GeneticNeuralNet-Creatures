@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Gnn.Visual.GameObjects {
 
     public class Food : GameObject, IWorldVisible {
-        private const float AddHealthPerSecond = 1f / 50f;
+        private const float AddHealthPerSecond = 1f / 25f;
 
         private float health;
 
@@ -25,6 +25,7 @@ namespace Gnn.Visual.GameObjects {
         }
 
         public override void Interact(float secsPassed) {
+            base.Interact(secsPassed);
             Health += AddHealthPerSecond * secsPassed;
         }
 

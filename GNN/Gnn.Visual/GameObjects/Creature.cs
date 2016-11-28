@@ -25,9 +25,9 @@ namespace Gnn.Visual.GameObjects {
 
         private Vision Eyes;
 
-        public Creature(World world, MainGameContent res, Vector2 position, int eyeCount = DefEyeCount) : base(world, res.TCreature, position) {
+        public Creature(World world, MainGameContent res, Vector2 position, int eyeCount = DefEyeCount, Network brain = null) : base(world, res.TCreature, position) {
             Eyes = new Vision(this, eyeCount);
-            Brain = Network.Create(HyperbolicTangentFunction.Instance, true, Eyes.Count * 3, 1, (int)(Eyes.Count / 1.5));
+            Brain = brain ?? Network.Create(HyperbolicTangentFunction.Instance, true, Eyes.Count * 3, 1, (int)(Eyes.Count * 2.0f));
         }
 
         public override void Move(float secsPassed) {
@@ -39,7 +39,8 @@ namespace Gnn.Visual.GameObjects {
         }
 
         public override void Interact(float secsPassed) {
-            var notMe = World.GameObjs.Where(g => g != this);
+            base.Interact(secsPassed);
+            var notMe = World.ActiveGameObjs.Where(g => g != this);
             Eyes.Update(notMe);
 
             for(int e = 0; e < Eyes.Count; e++) {
@@ -53,7 +54,7 @@ namespace Gnn.Visual.GameObjects {
                 Brain.Input[e * 3 + 2].Value = inpA;
             }
 
-            foreach(var food in World.GameObjs.OfType<Food>()) {
+            foreach(var food in World.ActiveGameObjs.OfType<Food>()) {
                 var dst = Vector2.Distance(food.CenterPosition, CenterPosition);
                 if(dst < Radius + food.Radius) {
                     Health += (food.Health * 0.2f);
@@ -73,7 +74,7 @@ namespace Gnn.Visual.GameObjects {
         }
 
         private class Vision {
-            public const int VisionDistance = 150;
+            public const int VisionDistance = 200;
             private const float EyeDistanceRad = MathHelper.TwoPi / 12f;
 
             private Creature Owner;
@@ -91,6 +92,9 @@ namespace Gnn.Visual.GameObjects {
                 EyeAngles = new float[eyeCount];
                 Visible = new Vector3[eyeCount];
                 VisionLines = new Tuple<Vector2, Vector2>[eyeCount];
+                for(int i = 0; i < VisionLines.Length; i++) {
+                    VisionLines[i] = new Tuple<Vector2, Vector2>(new Vector2(), new Vector2());
+                }
 
                 int index = 0;
                 for(float f = -((eyeCount - 1f) / 2f); f <= ((eyeCount - 1f) / 2f); f++) {
