@@ -15,17 +15,19 @@ using System.Threading.Tasks;
 namespace Gnn.Visual {
 
     public class World {
-        public const int CreatureCount = 100;
-        public const int FoodCount = 300;
-        public const int ObjCount = CreatureCount + FoodCount;
+        public const int CreatureCount = 150;
+        public const float FoodToCreatureRatio = 2;
 
         public const int WorldSize = 2500;
         public const float MaxWorldTimeSec = 120f;
 
         private static TransferFunction Transfer = HyperbolicTangentFunction.Instance;
 
-        public GameObject[] AllGameObjs { get; }
+        public List<Food> FoodObjs { get; }
+        public Creature[] CreatureObjs { get; private set; }
+
         public GameObject[] ActiveGameObjs;
+        public IEnumerable<GameObject> AllGameObjs => CreatureObjs.Cast<GameObject>().Concat(FoodObjs);
 
         public float WorldTotalTimeSec { get; private set; }
 
@@ -34,7 +36,9 @@ namespace Gnn.Visual {
 
         public World(MainGame game) {
             Game = game;
-            AllGameObjs = new GameObject[ObjCount];
+
+            CreatureObjs = new Creature[CreatureCount];
+            FoodObjs = new List<Food>();
             ActiveGameObjs = new GameObject[0];
         }
 
@@ -52,6 +56,13 @@ namespace Gnn.Visual {
                 RePopulate();
                 WorldTotalTimeSec = 0;
             }
+
+            FoodObjs.RemoveAll(f => !f.Active);
+            var shortage = (ActiveGameObjs.OfType<Creature>().Count() * FoodToCreatureRatio) - FoodObjs.Count;
+            for(int i = 0; i < shortage; i++) {
+                var @new = new Food(this, Game.Res, GeomHelper.RandomPointInCircel(Game.Rand, WorldSize));
+                FoodObjs.Add(@new);
+            }
         }
 
         public void DrawRelative(SpriteBatch sb) {
@@ -68,18 +79,13 @@ namespace Gnn.Visual {
         private void InitPopulate() {
             for(int i = 0; i < CreatureCount; i++) {
                 var @new = new Creature(this, Game.Res, GeomHelper.RandomPointInCircel(Game.Rand, WorldSize));
-                AllGameObjs[i] = @new;
-            }
-
-            for(int i = 0; i < FoodCount; i++) {
-                var @new = new Food(this, Game.Res, GeomHelper.RandomPointInCircel(Game.Rand, WorldSize));
-                AllGameObjs[i + CreatureCount] = @new;
+                CreatureObjs[i] = @new;
             }
         }
 
         private void RePopulate() {
+            FoodObjs.Clear();
             var creatures = AllGameObjs.OfType<Creature>().ToArray();
-            var plants = AllGameObjs.OfType<Food>().ToArray();
 
             var gen = new Genetic.Genetic(0.04f, 0.001f, () => Helpers.MathHelper.Random(Transfer.XMin, Transfer.XMax));
             var minLifeSpan = creatures.Min(c => c.Lifespan);
@@ -90,12 +96,7 @@ namespace Gnn.Visual {
             for(int i = 0; i < creatures.Length; i++) {
                 var nw = creatures[i].Brain.SetWeights(res[i]);
                 var @new = new Creature(this, Game.Res, GeomHelper.RandomPointInCircel(Game.Rand, WorldSize), brain: nw);
-                AllGameObjs[i] = @new;
-            }
-
-            for(int i = 0; i < FoodCount; i++) {
-                var @new = new Food(this, Game.Res, plants[i].CenterPosition);
-                AllGameObjs[i + CreatureCount] = @new;
+                CreatureObjs[i] = @new;
             }
 
             StatusStr = $"LF: {creatures.Min(c => c.Lifespan)} : {creatures.Max(c => c.Lifespan)} : {creatures.Average(c => c.Lifespan)}\nVar: {indvdl.AvgVariety()}";

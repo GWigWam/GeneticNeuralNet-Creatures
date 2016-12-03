@@ -14,7 +14,7 @@ namespace Gnn.Visual.GameObjects {
     public class Creature : GameObject, IWorldVisible {
         private const int DefEyeCount = 5;
         private const float MaxRotPerSecond = (MathHelper.TwoPi / 2);
-        private const float MaxDistancePerSecond = 500;
+        private const float MaxDistancePerSecond = 600;
         private const float HealthLostPerSpeedSec = 1 / 35f;
         private const float IdleHealthLossPerSecond = 1f / 20f;
 
