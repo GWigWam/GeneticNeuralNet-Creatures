@@ -17,12 +17,19 @@ namespace Gnn.Visual.GameObjects {
         private const float MaxDistancePerSecond = 600;
         private const float HealthLostPerSpeedSec = 1 / 35f;
         private const float IdleHealthLossPerSecond = 1f / 20f;
+        private const float MaxHealth = 2f;
 
         public Network Brain { get; }
 
         public Vector2 Color => new Vector2(1, 0);
 
-        public float Health { get; private set; } = 0.3f;
+        private float health = 0.3f;
+        public float Health {
+            get { return health; }
+            set {
+                health = value < MaxHealth ? value : MaxHealth;
+            }
+        }
 
         private Vision Eyes;
 
