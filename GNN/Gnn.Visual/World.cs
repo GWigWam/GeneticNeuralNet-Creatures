@@ -3,6 +3,7 @@ using Gnn.NeuralNet;
 using Gnn.NeuralNet.Structures.TransferFunctions;
 using Gnn.Visual.GameObjects;
 using Gnn.Visual.GameObjects.Base;
+using Gnn.Visual.GameObjects.CreatureComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -90,12 +91,12 @@ namespace Gnn.Visual {
             var gen = new Genetic.Genetic(0.04f, 0.001f, () => Helpers.MathHelper.Random(Transfer.XMin, Transfer.XMax));
             var minLifeSpan = creatures.Min(c => c.Lifespan);
             var indvdl = creatures
-                .Select(c => c.Brain.ToIndividual(c.Lifespan - minLifeSpan));
+                .Select(c => c.Brain.Net.ToIndividual(c.Lifespan - minLifeSpan));
             var res = gen.Apply(indvdl).ToArray();
 
             for(int i = 0; i < creatures.Length; i++) {
-                var nw = creatures[i].Brain.SetWeights(res[i]);
-                var @new = new Creature(this, Game.Res, GeomHelper.RandomPointInCircel(Game.Rand, WorldSize), brain: nw);
+                var nw = creatures[i].Brain.Net.SetWeights(res[i]);
+                var @new = new Creature(this, Game.Res, GeomHelper.RandomPointInCircel(Game.Rand, WorldSize), initNw: nw);
                 CreatureObjs[i] = @new;
             }
 

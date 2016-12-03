@@ -45,9 +45,11 @@
   <ItemGroup>
     <Compile Include="DrawHelper.cs" />
     <Compile Include="GameObjects\Base\IWorldVisible.cs" />
+    <Compile Include="GameObjects\CreatureComponents\Brain.cs" />
+    <Compile Include="GameObjects\CreatureComponents\Vision.cs" />
     <Compile Include="GameObjects\Food.cs" />
     <Compile Include="GeomHelper.cs" />
-    <Compile Include="GameObjects\Creature.cs" />
+    <Compile Include="GameObjects\CreatureComponents\Creature.cs" />
     <Compile Include="GameObjects\Base\Drawable.cs" />
     <Compile Include="GameObjects\Base\GameObject.cs" />
     <Compile Include="MainGame.cs" />
