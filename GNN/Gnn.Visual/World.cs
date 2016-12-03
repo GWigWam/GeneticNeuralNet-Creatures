@@ -20,7 +20,7 @@ namespace Gnn.Visual {
         public const int ObjCount = CreatureCount + FoodCount;
 
         public const int WorldSize = 2500;
-        public const float MaxWorldTimeSec = 60f;
+        public const float MaxWorldTimeSec = 120f;
 
         private static TransferFunction Transfer = HyperbolicTangentFunction.Instance;
 
@@ -29,6 +29,7 @@ namespace Gnn.Visual {
 
         public float WorldTotalTimeSec { get; private set; }
 
+        private string StatusStr = string.Empty;
         private MainGame Game { get; }
 
         public World(MainGame game) {
@@ -53,11 +54,15 @@ namespace Gnn.Visual {
             }
         }
 
-        public void Draw(SpriteBatch sb) {
+        public void DrawRelative(SpriteBatch sb) {
             var visRect = Game.Cam.VisibleArea;
             foreach(var c in ActiveGameObjs.Where(go => go.DrawRectangle.Intersects(visRect))) {
                 c.Draw(sb);
             }
+        }
+
+        public void DrawStatic(SpriteBatch sb) {
+            sb.DrawString(Game.Res.FConsolas, StatusStr, new Vector2(0, 30), Color.Black);
         }
 
         private void InitPopulate() {
@@ -76,9 +81,10 @@ namespace Gnn.Visual {
             var creatures = AllGameObjs.OfType<Creature>().ToArray();
             var plants = AllGameObjs.OfType<Food>().ToArray();
 
-            var gen = new Genetic.Genetic(0.02f, 0.001f, () => Helpers.MathHelper.Random(Transfer.XMin, Transfer.XMax));
+            var gen = new Genetic.Genetic(0.04f, 0.001f, () => Helpers.MathHelper.Random(Transfer.XMin, Transfer.XMax));
+            var minLifeSpan = creatures.Min(c => c.Lifespan);
             var indvdl = creatures
-                .Select(c => c.Brain.ToIndividual(c.Lifespan));
+                .Select(c => c.Brain.ToIndividual(c.Lifespan - minLifeSpan));
             var res = gen.Apply(indvdl).ToArray();
 
             for(int i = 0; i < creatures.Length; i++) {
@@ -91,6 +97,8 @@ namespace Gnn.Visual {
                 var @new = new Food(this, Game.Res, plants[i].CenterPosition);
                 AllGameObjs[i + CreatureCount] = @new;
             }
+
+            StatusStr = $"LF: {creatures.Min(c => c.Lifespan)} : {creatures.Max(c => c.Lifespan)} : {creatures.Average(c => c.Lifespan)}\nVar: {indvdl.AvgVariety()}";
         }
     }
 }

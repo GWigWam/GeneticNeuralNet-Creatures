@@ -12,12 +12,11 @@ using System.Threading.Tasks;
 namespace Gnn.Visual.GameObjects {
 
     public class Creature : GameObject, IWorldVisible {
-        public const float MaxRotPerSecond = (MathHelper.TwoPi / 2);
-        public const float MaxDistancePerSecond = 500;
         private const int DefEyeCount = 5;
-
-        private const float IdleHealthLossPerSecond = 1f / 20f;
+        private const float MaxRotPerSecond = (MathHelper.TwoPi / 2);
+        private const float MaxDistancePerSecond = 500;
         private const float HealthLostPerSpeedSec = 1 / 35f;
+        private const float IdleHealthLossPerSecond = 1f / 20f;
 
         public Network Brain { get; }
 
@@ -64,7 +63,7 @@ namespace Gnn.Visual.GameObjects {
                 var dst = Vector2.Distance(food.CenterPosition, CenterPosition);
                 if(dst < Radius + food.Radius) {
                     Health += (food.Health * 0.2f);
-                    food.Health = 0;
+                    food.Destory();
                 }
             }
 
