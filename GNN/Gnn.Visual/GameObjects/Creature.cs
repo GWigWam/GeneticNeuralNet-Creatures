@@ -12,22 +12,24 @@ using System.Threading.Tasks;
 namespace Gnn.Visual.GameObjects {
 
     public class Creature : GameObject, IWorldVisible {
-        public const float MaxRotPerSecond = (float)(MathHelper.TwoPi / 2);
-        public const float DistancePerSecond = 300;
+        public const float MaxRotPerSecond = (MathHelper.TwoPi / 2);
+        public const float MaxDistancePerSecond = 500;
         private const int DefEyeCount = 5;
-        private const float HealthLossPerSecond = 1f / 30f;
+
+        private const float IdleHealthLossPerSecond = 1f / 20f;
+        private const float HealthLostPerSpeedSec = 1 / 35f;
 
         public Network Brain { get; }
 
         public Vector2 Color => new Vector2(1, 0);
 
-        public float Health { get; private set; } = 0.5f;
+        public float Health { get; private set; } = 0.3f;
 
         private Vision Eyes;
 
         public Creature(World world, MainGameContent res, Vector2 position, int eyeCount = DefEyeCount, Network brain = null) : base(world, res.TCreature, position) {
             Eyes = new Vision(this, eyeCount);
-            Brain = brain ?? Network.Create(HyperbolicTangentFunction.Instance, true, Eyes.Count * 3, 1, (int)(Eyes.Count * 2.0f));
+            Brain = brain ?? Network.Create(HyperbolicTangentFunction.Instance, true, Eyes.Count * 3, 2, (int)(Eyes.Count * 2.0f));
         }
 
         public override void Move(float secsPassed) {
@@ -35,7 +37,11 @@ namespace Gnn.Visual.GameObjects {
             var rotChange = Helpers.MathHelper.ShiftRange(outp, Brain.Transfer.YMin, Brain.Transfer.YMax, -MaxRotPerSecond, MaxRotPerSecond);
             Rotation += (rotChange * secsPassed);
 
-            CenterPosition = GeomHelper.GetRelative(CenterPosition, Rotation, DistancePerSecond * secsPassed);
+            var spd = Helpers.MathHelper.ShiftRange(Brain.Output[1].Output, Brain.Transfer.YMin, Brain.Transfer.YMax, 0, 1);
+            var dist = MaxDistancePerSecond * secsPassed * spd;
+            Health -= spd * HealthLostPerSpeedSec * secsPassed;
+
+            CenterPosition = GeomHelper.GetRelative(CenterPosition, Rotation, dist);
         }
 
         public override void Interact(float secsPassed) {
@@ -62,7 +68,7 @@ namespace Gnn.Visual.GameObjects {
                 }
             }
 
-            Health -= (HealthLossPerSecond * secsPassed);
+            Health -= (IdleHealthLossPerSecond * secsPassed);
             if(Health < 0) {
                 Active = false;
             }

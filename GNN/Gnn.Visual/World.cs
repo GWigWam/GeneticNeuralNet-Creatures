@@ -16,7 +16,7 @@ namespace Gnn.Visual {
 
     public class World {
         public const int CreatureCount = 100;
-        public const int FoodCount = 200;
+        public const int FoodCount = 300;
         public const int ObjCount = CreatureCount + FoodCount;
 
         public const int WorldSize = 2500;
