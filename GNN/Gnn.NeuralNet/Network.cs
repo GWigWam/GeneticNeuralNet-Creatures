@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Gnn.NeuralNet {
 
+    [System.Diagnostics.DebuggerDisplay("{Description}")]
     public class Network {
         public Variable[] Input { get; protected set; }
         public INode[][] Hidden { get; protected set; }
@@ -18,6 +19,8 @@ namespace Gnn.NeuralNet {
         public Weight[] Weights { get; protected set; }
 
         public TransferFunction Transfer { get; protected set; }
+
+        private string Description => $"{Input.Count()} x {Hidden.Aggregate("", (a, c) => $"{a}{c.Length} x ")}{Output.Length} : {Weights.Count()} weights";
 
         private Network(TransferFunction transfer, bool hasBias) {
             if(transfer == null) {
