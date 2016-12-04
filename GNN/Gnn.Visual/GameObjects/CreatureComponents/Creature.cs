@@ -21,7 +21,7 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
 
         public Vector2 Color => new Vector2(1, 0);
 
-        private float health = 0.3f;
+        private float health = 1f;
         public float Health {
             get { return health; }
             set {

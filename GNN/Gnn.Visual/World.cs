@@ -17,7 +17,7 @@ namespace Gnn.Visual {
 
     public class World {
         public const int CreatureCount = 150;
-        public const float FoodToCreatureRatio = 2.5f;
+        public const float FoodToCreatureRatio = 2f;
 
         public const int WorldSize = 2500;
         public const float MaxWorldTimeSec = 100f;
@@ -31,6 +31,7 @@ namespace Gnn.Visual {
         public IEnumerable<GameObject> AllGameObjs => CreatureObjs.Cast<GameObject>().Concat(FoodObjs);
 
         public float WorldTotalTimeSec { get; private set; }
+        public int GenerationCount { get; private set; }
 
         private string StatusStr = string.Empty;
         public MainGame Game { get; }
@@ -85,6 +86,7 @@ namespace Gnn.Visual {
         }
 
         private void RePopulate() {
+            GenerationCount++;
             FoodObjs.Clear();
             var creatures = AllGameObjs.OfType<Creature>().ToArray();
 
@@ -100,7 +102,7 @@ namespace Gnn.Visual {
                 CreatureObjs[i] = @new;
             }
 
-            StatusStr = $"LF: {creatures.Min(c => c.Lifespan)} : {creatures.Max(c => c.Lifespan)} : {creatures.Average(c => c.Lifespan)}\nVar={indvdl.AvgVariety()}";
+            StatusStr = $"LF: {creatures.Min(c => c.Lifespan)} : {creatures.Max(c => c.Lifespan)} : {creatures.Average(c => c.Lifespan)}\nVar={indvdl.AvgVariety()} Gen#={GenerationCount}";
         }
     }
 }
