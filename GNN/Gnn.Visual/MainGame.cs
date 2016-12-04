@@ -14,6 +14,9 @@ namespace Gnn.Visual {
         private World World { get; }
 
         private Keys[] PressedKeys = new Keys[0];
+        private Point? MouseDownPos;
+
+        private GameObjects.Base.GameObject Following;
 
         #region FPS counter
         private int CurSecondNr = -1;
@@ -127,6 +130,14 @@ namespace Gnn.Visual {
             DrawStatic(gameTime);
             spriteBatch.End();
 
+            if(Following != null) {
+                if(!Following.Active) {
+                    Following = null;
+                } else {
+                    Cam.Center = Following.CenterPosition.ToPoint();
+                }
+            }
+
             spriteBatch.Begin(transformMatrix: Cam.Transform);
             DrawRelative(gameTime);
             spriteBatch.End();
@@ -180,6 +191,25 @@ namespace Gnn.Visual {
             }
 
             PressedKeys = kState.GetPressedKeys();
+
+            if(!MouseDownPos.HasValue && mState.LeftButton == ButtonState.Pressed) {
+                MouseDownPos = mState.Position;
+            }
+            if(MouseDownPos.HasValue && mState.LeftButton == ButtonState.Released) {
+                SelectGameObject(MouseDownPos.Value);
+                MouseDownPos = null;
+            }
+        }
+
+        private void SelectGameObject(Point pos) {
+            var clicked = World.ActiveGameObjs.FirstOrDefault(g => {
+                var l = Vector2.Transform(g.CenterPosition, Cam.Transform);
+                var res = Vector2.Distance(l, pos.ToVector2()) < g.Radius;
+                return res;
+            });
+            if(clicked != null) {
+                Following = clicked != Following ? clicked : null;
+            }
         }
     }
 }
