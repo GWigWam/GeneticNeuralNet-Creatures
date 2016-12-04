@@ -15,9 +15,9 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
         internal const int DefEyeCount = 5;
         internal const float MaxRotPerSecond = (MathHelper.TwoPi / 2);
         internal const float MaxDistancePerSecond = 600;
-        internal const float HealthLostPerSpeedSec = 1 / 35f;
-        internal const float IdleHealthLossPerSecond = 1f / 20f;
-        internal const float MaxHealth = 2f;
+        internal const float HealthLostPerSpeedSec = 1 / 15f;
+        internal const float IdleHealthLossPerSecond = 1f / 10f;
+        internal const float MaxHealth = 4f;
 
         public Vector2 Color => new Vector2(1, 0);
 
@@ -59,7 +59,7 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
             foreach(var food in World.ActiveGameObjs.OfType<Food>()) {
                 var dst = Vector2.Distance(food.CenterPosition, CenterPosition);
                 if(dst < Radius + food.Radius) {
-                    Health += (food.Health * 0.2f);
+                    Health += food.Health;
                     food.Destory();
                 }
             }
@@ -71,6 +71,10 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
         }
 
         public override void Draw(SpriteBatch sb) {
+            if(ShowInfo) {
+                sb.DrawString(World.Game.Res.FConsolas, $"{Health}", CenterPosition + new Vector2(0, Radius + 3), Microsoft.Xna.Framework.Color.Black);
+            }
+
             Eyes.Draw(sb);
             base.Draw(sb);
         }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Gnn.Visual.GameObjects {
 
     public class Food : GameObject, IWorldVisible {
-        private const float MaxHealth = 0.7f;
+        private const float MaxHealth = 0.5f;
         private const float AddHealthPerSecond = MaxHealth / 10f;
 
         private float health;
@@ -35,6 +35,10 @@ namespace Gnn.Visual.GameObjects {
         }
 
         public override void Draw(SpriteBatch sb) {
+            if(ShowInfo) {
+                sb.DrawString(World.Game.Res.FConsolas, $"{Health}", CenterPosition + new Vector2(0, Radius + 3), Microsoft.Xna.Framework.Color.Black);
+            }
+
             var rg = Color;
             var col = new Color(rg.X, rg.Y, 0, (Health / MaxHealth) + 0.3f);
             sb.Draw(Texture, new Rectangle(DrawX, DrawY, Texture.Width, Texture.Height), null, col, Rotation, Origin, SpriteEffects.None, 0);

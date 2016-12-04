@@ -33,7 +33,7 @@ namespace Gnn.Visual {
         public float WorldTotalTimeSec { get; private set; }
 
         private string StatusStr = string.Empty;
-        private MainGame Game { get; }
+        public MainGame Game { get; }
 
         public World(MainGame game) {
             Game = game;

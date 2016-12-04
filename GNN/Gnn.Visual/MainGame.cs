@@ -208,7 +208,16 @@ namespace Gnn.Visual {
                 return res;
             });
             if(clicked != null) {
-                Following = clicked != Following ? clicked : null;
+                if(clicked != Following) {
+                    if(Following != null) {
+                        Following.ShowInfo = false;
+                    }
+                    Following = clicked;
+                    Following.ShowInfo = true;
+                } else {
+                    Following.ShowInfo = false;
+                    Following = null;
+                }
             }
         }
     }
