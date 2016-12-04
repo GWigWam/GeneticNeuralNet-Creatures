@@ -19,10 +19,10 @@ namespace Gnn.Genetic.Procedures {
                 var cr = MathHelper.Random() * totalFitness;
 
                 var passedFitness = 0F;
-                var selected = source.First(c => {
+                var selected = source.FirstOrDefault(c => {
                     passedFitness += c.Fitness;
                     return passedFitness > cr;
-                });
+                }) ?? source.Last();
                 yield return selected;
             }
         }
