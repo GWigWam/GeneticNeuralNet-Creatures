@@ -160,7 +160,7 @@ namespace Gnn.Visual {
 
             var col = FPS >= 59 ? Color.Black : Color.DarkRed;
 
-            spriteBatch.DrawString(Res.FConsolas, $"{FPS} FPS x{TicksPerUpdate}, rT={gt.TotalGameTime.Seconds}s", Vector2.Zero, col);
+            spriteBatch.DrawString(Res.FConsolas, $"{FPS} FPS x{TicksPerUpdate}, rT={(int)gt.TotalGameTime.TotalSeconds}s", Vector2.Zero, col);
 
             if(IsCpuThrottled || IsGpuThrottled) {
                 spriteBatch.DrawString(Res.FConsolas, $"{(IsCpuThrottled ? "[CPU] " : string.Empty)}{(IsGpuThrottled ? "[GPU]" : string.Empty)}", new Vector2(0, 10), Color.DarkRed);

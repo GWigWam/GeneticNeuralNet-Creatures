@@ -17,10 +17,10 @@ namespace Gnn.Visual {
 
     public class World {
         public const int CreatureCount = 150;
-        public const float FoodToCreatureRatio = 2;
+        public const float FoodToCreatureRatio = 2.5f;
 
         public const int WorldSize = 2500;
-        public const float MaxWorldTimeSec = 120f;
+        public const float MaxWorldTimeSec = 100f;
 
         private static TransferFunction Transfer = HyperbolicTangentFunction.Instance;
 
@@ -100,7 +100,7 @@ namespace Gnn.Visual {
                 CreatureObjs[i] = @new;
             }
 
-            StatusStr = $"LF: {creatures.Min(c => c.Lifespan)} : {creatures.Max(c => c.Lifespan)} : {creatures.Average(c => c.Lifespan)}\nVar: {indvdl.AvgVariety()}";
+            StatusStr = $"LF: {creatures.Min(c => c.Lifespan)} : {creatures.Max(c => c.Lifespan)} : {creatures.Average(c => c.Lifespan)}\nVar={indvdl.AvgVariety()}";
         }
     }
 }

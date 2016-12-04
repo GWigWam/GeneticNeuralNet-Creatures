@@ -47,7 +47,7 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
         }
 
         private Network CreateDefaultNet(int inpCount) {
-            return Network.Create(Transfer, true, inpCount * 3, 3, 20);
+            return Network.Create(Transfer, true, inpCount * 3, 3, 15, 5);
         }
     }
 }
