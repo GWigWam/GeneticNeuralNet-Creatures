@@ -55,3 +55,9 @@
 /processorParam:TextureFormat=Color
 /build:Food.png
 
+#begin Trebuchet.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:Trebuchet.spritefont
+
