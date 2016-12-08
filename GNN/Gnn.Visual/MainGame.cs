@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Gnn.Visual {
@@ -33,6 +34,7 @@ namespace Gnn.Visual {
         public MainGameContent Res { get; private set; }
         public Random Rand = new Random(4);
 
+        public bool FastMode { get; set; }
         public int TicksPerUpdate { get; set; } = 1;
 
         public MainGame() {
@@ -110,8 +112,22 @@ namespace Gnn.Visual {
             Cam.Move(mState, kState);
             var mPosRelative = Vector2.Transform(mState.Position.ToVector2(), Matrix.Invert(Cam.Transform)).ToPoint();
 
-            for(int t = 0; t < TicksPerUpdate; t++) {
-                World.Update(mState, kState, mPosRelative, (float)gameTime.ElapsedGameTime.TotalSeconds / 1.0f);
+            if(!FastMode) {
+                for(int t = 0; t < TicksPerUpdate; t++) {
+                    World.Update(mState, kState, mPosRelative, (float)gameTime.ElapsedGameTime.TotalSeconds / 1.0f);
+                }
+            } else {
+                const float inputElapsedTimeSec = 1f / 35f;
+                const float preferredUpdateMethodDurationSec = 1f / 10f;
+
+                float start = Stopwatch.GetTimestamp() / (float)Stopwatch.Frequency;
+                var updateCount = 0;
+                do {
+                    World.Update(mState, kState, mPosRelative, inputElapsedTimeSec);
+                    updateCount++;
+                } while((Stopwatch.GetTimestamp() / (float)Stopwatch.Frequency) - start <= preferredUpdateMethodDurationSec);
+
+                TicksPerUpdate = updateCount;
             }
 
             base.Update(gameTime);
@@ -147,15 +163,17 @@ namespace Gnn.Visual {
         }
 
         private void DrawStatic(GameTime gameTime) {
-            DrawFps(gameTime);
+            DrawInfo(gameTime);
             World.DrawStatic(spriteBatch);
         }
 
         private void DrawRelative(GameTime gameTime) {
-            World.DrawRelative(spriteBatch);
+            if(!FastMode) {
+                World.DrawRelative(spriteBatch);
+            }
         }
 
-        private void DrawFps(GameTime gt) {
+        private void DrawInfo(GameTime gt) {
             if(gt.TotalGameTime.Seconds == CurSecondNr) {
                 CurFrameCount++;
             } else {
@@ -169,12 +187,12 @@ namespace Gnn.Visual {
                 UpdateTimeMs = 0;
             }
 
-            var col = FPS >= 59 ? Color.Black : Color.DarkRed;
+            var col = FPS >= 59 || FastMode ? Color.Black : Color.DarkRed;
 
-            spriteBatch.DrawString(Res.FConsolas, $"{FPS} FPS x{TicksPerUpdate}, rT={(int)gt.TotalGameTime.TotalSeconds}s", Vector2.Zero, col);
+            spriteBatch.DrawString(Res.FConsolas, $"{FPS} FPS x{TicksPerUpdate}{(FastMode ? " [FASTMODE]" : "")}, rT={(int)gt.TotalGameTime.TotalSeconds}s", Vector2.Zero, col);
 
             if(IsCpuThrottled || IsGpuThrottled) {
-                spriteBatch.DrawString(Res.FConsolas, $"{(IsCpuThrottled ? "[CPU] " : string.Empty)}{(IsGpuThrottled ? "[GPU]" : string.Empty)}", new Vector2(0, 10), Color.DarkRed);
+                spriteBatch.DrawString(Res.FConsolas, $"{(IsCpuThrottled ? "[CPU] " : string.Empty)}{(IsGpuThrottled ? "[GPU]" : string.Empty)}", new Vector2(0, 10), col);
             }
         }
 
@@ -184,10 +202,22 @@ namespace Gnn.Visual {
             if(p(Keys.Escape)) {
                 Exit();
             }
+
+            //Update speed control
             if(p(Keys.Add)) {
-                TicksPerUpdate++;
+                if(kState.IsKeyDown(Keys.LeftControl) || kState.IsKeyDown(Keys.RightControl)) {
+                    FastMode = true;
+                    TicksPerUpdate = 1;
+                } else {
+                    TicksPerUpdate++;
+                }
             } else if(p(Keys.Subtract)) {
-                TicksPerUpdate = TicksPerUpdate > 0 ? TicksPerUpdate - 1 : 0;
+                if(kState.IsKeyDown(Keys.LeftControl) || kState.IsKeyDown(Keys.RightControl)) {
+                    FastMode = false;
+                    TicksPerUpdate = 1;
+                } else {
+                    TicksPerUpdate = TicksPerUpdate > 0 ? TicksPerUpdate - 1 : 0;
+                }
             }
 
             PressedKeys = kState.GetPressedKeys();
