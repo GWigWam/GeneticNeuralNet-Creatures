@@ -9,6 +9,9 @@ using System.Linq;
 namespace Gnn.Visual {
 
     public class MainGame : Game {
+        private const int InitScreenWidth = 1280;
+        private const int InitScreenHeight = 768;
+
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
@@ -37,10 +40,12 @@ namespace Gnn.Visual {
         public bool FastMode { get; set; }
         public int TicksPerUpdate { get; set; } = 1;
 
+        private bool ShowHelp { get; set; }
+
         public MainGame() {
             graphics = new GraphicsDeviceManager(this) {
-                PreferredBackBufferWidth = 1280,
-                PreferredBackBufferHeight = 768,
+                PreferredBackBufferWidth = InitScreenWidth,
+                PreferredBackBufferHeight = InitScreenHeight,
                 SynchronizeWithVerticalRetrace = true,
             };
             Content.RootDirectory = "Content";
@@ -142,10 +147,6 @@ namespace Gnn.Visual {
             var startDraw = Environment.TickCount;
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
-            DrawStatic(gameTime);
-            spriteBatch.End();
-
             if(Following != null) {
                 if(!Following.Active) {
                     Following = null;
@@ -156,6 +157,10 @@ namespace Gnn.Visual {
 
             spriteBatch.Begin(transformMatrix: Cam.Transform);
             DrawRelative(gameTime);
+            spriteBatch.End();
+
+            spriteBatch.Begin();
+            DrawStatic(gameTime);
             spriteBatch.End();
 
             base.Draw(gameTime);
@@ -189,10 +194,15 @@ namespace Gnn.Visual {
 
             var col = FPS >= 59 || FastMode ? Color.Black : Color.DarkRed;
 
-            spriteBatch.DrawString(Res.FConsolas, $"{FPS} FPS x{TicksPerUpdate}{(FastMode ? " [FASTMODE]" : "")}, rT={(int)gt.TotalGameTime.TotalSeconds}s", Vector2.Zero, col);
+            spriteBatch.DrawString(Res.FConsolas, $"(Help: F1) - {FPS:D2} FPS x{TicksPerUpdate}{(FastMode ? " [FASTMODE]" : "")}, rT={(int)gt.TotalGameTime.TotalSeconds}s", Vector2.Zero, col);
 
             if(IsCpuThrottled || IsGpuThrottled) {
                 spriteBatch.DrawString(Res.FConsolas, $"{(IsCpuThrottled ? "[CPU] " : string.Empty)}{(IsGpuThrottled ? "[GPU]" : string.Empty)}", new Vector2(0, 10), col);
+            }
+
+            if(ShowHelp) {
+                DrawHelper.DrawRect(spriteBatch, 0, 0, InitScreenWidth, InitScreenHeight, Color.LightGray);
+                spriteBatch.DrawString(Res.FTrebuchet, "Plus / Minus to control speed\nCtrl + Plus / Minus for superspeed\n\nCam:\n    Drag w/ mouse to move cam\n    Scroll for zoom\n    Ctrl + Scroll for rotation\n    Ctrl + Space to reset\n\nClick a creature to follow it around", new Vector2(50, 50), Color.Black);
             }
         }
 
@@ -218,6 +228,10 @@ namespace Gnn.Visual {
                 } else {
                     TicksPerUpdate = TicksPerUpdate > 0 ? TicksPerUpdate - 1 : 0;
                 }
+            }
+
+            if(p(Keys.F1)) {
+                ShowHelp = !ShowHelp;
             }
 
             PressedKeys = kState.GetPressedKeys();
