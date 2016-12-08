@@ -24,8 +24,14 @@ namespace Gnn.Visual {
             spriteBatch.Draw(Pixel, rect, null, color, rotation, Vector2.Zero, SpriteEffects.None, 0);
         }
 
+        public static void DrawRect(SpriteBatch spriteBatch, Rectangle rect, Color color) {
+            spriteBatch.Draw(Pixel, rect, color);
+        }
+
         public static void DrawLine(SpriteBatch spriteBatch, Point start, Point end, int width, Color color) => DrawLine(spriteBatch, new Vector2(start.X, start.Y), new Vector2(end.X, end.Y), width, color);
 
         public static void DrawLine(SpriteBatch spriteBatch, float startX, float startY, float endX, float endY, int width, Color color) => DrawLine(spriteBatch, new Vector2(startX, startY), new Vector2(endX, endY), width, color);
+
+        public static void DrawRect(SpriteBatch spriteBatch, int x, int y, int width, int height, Color color) => DrawRect(spriteBatch, new Rectangle(x, y, width, height), color);
     }
 }
