@@ -85,12 +85,12 @@ namespace Gnn.Visual {
             return intersects;
         }
 
-        public static Vector2 GetRelative(Vector2 org, float angle, float distance) {
-            return org + new Vector2((float)Math.Cos(angle) * distance, (float)Math.Sin(angle) * distance);
+        public static Vector2 CreateVector(float angle, float magnitude) {
+            return new Vector2((float)Math.Cos(angle) * magnitude, (float)Math.Sin(angle) * magnitude);
         }
 
-        public static Point GetRelative(Point org, float angle, float distance) {
-            return org + new Point((int)((float)Math.Cos(angle) * distance), (int)((float)Math.Sin(angle) * distance));
+        public static Vector2 GetRelative(Vector2 org, float angle, float distance) {
+            return org + CreateVector(angle, distance);
         }
 
         public static float Magnitude(this Vector2 vect) {

@@ -13,9 +13,13 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
 
     public class Creature : GameObject, IWorldVisible {
         internal const int DefEyeCount = 5;
-        internal const float MaxRotPerSecond = (MathHelper.TwoPi / 2);
-        internal const float MaxDistancePerSecond = 600;
-        internal const float HealthLostPerSpeedSec = 1 / 15f;
+
+        internal const float MaxRotPerSecond = (MathHelper.Pi / 2);
+
+        internal const float MaxAccelerationPerSecond = 2.5f;
+        internal const float AccelerationLossPerSecond = 0.8f;
+
+        internal const float HealthLostPerAcceleration = 1 / 15f;
         internal const float IdleHealthLossPerSecond = 1f / 10f;
         internal const float MaxHealth = 4f;
 
@@ -29,6 +33,8 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
             }
         }
 
+        public Vector2 Momentum { get; set; }
+
         internal Vision Eyes;
         internal Brain Brain;
 
@@ -38,15 +44,24 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
         }
 
         public override void Move(float secsPassed) {
-            var outp = Brain.Outp_Rotation;
-            var rotChange = Helpers.MathHelper.ShiftRange(outp, Brain.MinOutput, Brain.MaxOutput, -MaxRotPerSecond, MaxRotPerSecond);
-            Rotation += (rotChange * secsPassed);
+            var rotationDelta = Helpers.MathHelper.ShiftRange(Brain.Outp_Rotation, Brain.MinOutput, Brain.MaxOutput, -MaxRotPerSecond, MaxRotPerSecond);
+            Rotation += (rotationDelta * secsPassed);
 
-            var spd = Helpers.MathHelper.ShiftRange(Brain.Outp_Speed, Brain.MinOutput, Brain.MaxOutput, 0, 1);
-            var dist = MaxDistancePerSecond * secsPassed * spd;
-            Health -= spd * HealthLostPerSpeedSec * secsPassed;
+            var momLossX = Momentum.X > 0 ?
+                Math.Max(0, Momentum.X - AccelerationLossPerSecond * (float)Math.Cos(Rotation) * secsPassed) :
+                Math.Min(0, Momentum.X + AccelerationLossPerSecond * (float)Math.Cos(Rotation) * secsPassed);
+            var momLossY = Momentum.Y > 0 ?
+                Math.Max(0, Momentum.Y - AccelerationLossPerSecond * (float)Math.Sin(Rotation) * secsPassed) :
+                Math.Min(0, Momentum.Y + AccelerationLossPerSecond * (float)Math.Sin(Rotation) * secsPassed);
+            Momentum = new Vector2(momLossX, momLossY);
 
-            CenterPosition = GeomHelper.GetRelative(CenterPosition, Rotation, dist);
+            var accelerationFraction = Helpers.MathHelper.ShiftRange(Brain.Outp_Speed, Brain.MinOutput, Brain.MaxOutput, 0, 1);
+            var acceleration = accelerationFraction * MaxAccelerationPerSecond * secsPassed;
+            var accelerationDelta = GeomHelper.CreateVector(Rotation, acceleration);
+            Momentum += accelerationDelta;
+            CenterPosition += Momentum;
+
+            Health -= accelerationFraction * HealthLostPerAcceleration * secsPassed;
         }
 
         public override void Interact(float secsPassed) {
