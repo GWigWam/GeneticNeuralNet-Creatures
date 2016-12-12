@@ -34,6 +34,8 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
         }
 
         public Vector2 Momentum { get; set; }
+        public float Speed => Momentum.Length();
+        public float MomentumAngle => GeomHelper.Angle(0, 0, Momentum.X, Momentum.Y);
 
         internal Vision Eyes;
         internal Brain Brain;
@@ -46,14 +48,13 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
         public override void Move(float secsPassed) {
             var rotationDelta = Helpers.MathHelper.ShiftRange(Brain.Outp_Rotation, Brain.MinOutput, Brain.MaxOutput, -MaxRotPerSecond, MaxRotPerSecond);
             Rotation += (rotationDelta * secsPassed);
-
-            var momLossX = Momentum.X > 0 ?
+            var momLostX = Momentum.X > 0 ?
                 Math.Max(0, Momentum.X - AccelerationLossPerSecond * (float)Math.Cos(Rotation) * secsPassed) :
                 Math.Min(0, Momentum.X + AccelerationLossPerSecond * (float)Math.Cos(Rotation) * secsPassed);
-            var momLossY = Momentum.Y > 0 ?
+            var momLostY = Momentum.Y > 0 ?
                 Math.Max(0, Momentum.Y - AccelerationLossPerSecond * (float)Math.Sin(Rotation) * secsPassed) :
                 Math.Min(0, Momentum.Y + AccelerationLossPerSecond * (float)Math.Sin(Rotation) * secsPassed);
-            Momentum = new Vector2(momLossX, momLossY);
+            Momentum = new Vector2(momLostX, momLostY);
 
             var accelerationFraction = Helpers.MathHelper.ShiftRange(Brain.Outp_Speed, Brain.MinOutput, Brain.MaxOutput, 0, 1);
             var acceleration = accelerationFraction * MaxAccelerationPerSecond * secsPassed;
@@ -86,12 +87,13 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
         }
 
         public override void Draw(SpriteBatch sb) {
-            if(ShowInfo) {
-                sb.DrawString(World.Game.Res.FConsolas, $"{Health}", CenterPosition + new Vector2(0, Radius + 3), Microsoft.Xna.Framework.Color.Black);
-            }
-
             Eyes.Draw(sb);
             base.Draw(sb);
+
+            if(ShowInfo) {
+                sb.DrawString(World.Game.Res.FConsolas, $"{Health}", CenterPosition + new Vector2(0, Radius + 3), Microsoft.Xna.Framework.Color.Black);
+                DrawHelper.DrawLine(sb, CenterPosition, GeomHelper.GetRelative(CenterPosition, MomentumAngle, Speed * 30), 1, Microsoft.Xna.Framework.Color.DarkBlue);
+            }
         }
     }
 }

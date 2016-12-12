@@ -102,5 +102,13 @@ namespace Gnn.Visual {
             var theta = ((double)random.Next() / int.MaxValue * 2.0 * Math.PI);
             return new Vector2((float)(r * Math.Cos(theta)), (float)(r * Math.Sin(theta)));
         }
+
+        public static float Angle(Vector2 p1, Vector2 p2) {
+            return Angle(p1.X, p1.Y, p2.X, p2.Y);
+        }
+
+        public static float Angle(float x1, float y1, float x2, float y2) {
+            return (float)Math.Atan2(y2 - y1, x2 - x1);
+        }
     }
 }
