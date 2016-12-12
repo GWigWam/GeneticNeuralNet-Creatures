@@ -2,12 +2,14 @@
 using Gnn.NeuralNet.Structures.TransferFunctions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Gnn.NeuralNet.Structures {
 
+    [DebuggerDisplay("P: [{Input.Length}] inputs => [{Output}]")]
     public class Perceptron : INode {
 
         public event Action OutputChanged;

@@ -1,12 +1,14 @@
 ﻿using Gnn.NeuralNet.Structures.Base;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Gnn.NeuralNet.Structures {
 
+    [DebuggerDisplay("V: [{Output}]")]
     public class Variable : INode {
 
         public event Action OutputChanged;
