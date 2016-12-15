@@ -15,9 +15,7 @@ namespace Gnn.Visual.GameObjects.Base {
 
         public float Rotation {
             get { return rotation; }
-            set {
-                rotation = value % MathHelper.TwoPi;
-            }
+            set { rotation = value; }
         }
 
         protected Vector2 Origin { get; }

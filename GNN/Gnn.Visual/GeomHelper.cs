@@ -103,12 +103,41 @@ namespace Gnn.Visual {
             return new Vector2((float)(r * Math.Cos(theta)), (float)(r * Math.Sin(theta)));
         }
 
+        /// <summary>
+        /// Calculates the angle between two vectors
+        /// </summary>
+        /// <returns>RAD between -Pi and Pi</returns>
         public static float Angle(Vector2 p1, Vector2 p2) {
             return Angle(p1.X, p1.Y, p2.X, p2.Y);
         }
 
+        /// <summary>
+        /// Calculates the angle between two points
+        /// </summary>
+        /// <returns>RAD between -Pi and Pi</returns>
         public static float Angle(float x1, float y1, float x2, float y2) {
             return (float)Math.Atan2(y2 - y1, x2 - x1);
+        }
+
+        /// <summary>
+        /// Takes an angle in RAD and returns an equivalent value between 0 and 2Pi
+        /// </summary>
+        /// <returns>RAD between 0 and 2Pi</returns>
+        public static float RadRange_TwoPi(float angle) {
+            var mod = angle % MathHelper.TwoPi;
+            return mod > 0 ? mod : mod + MathHelper.TwoPi;
+        }
+
+        /// <summary>
+        /// Takes an angle in RAD and returns an equivalent value between -Pi and Pi
+        /// </summary>
+        /// <param name="angle"></param>
+        /// <returns></returns>
+        public static float RadRange_Pi(float angle) {
+            angle = angle % MathHelper.TwoPi;
+            angle = (angle + MathHelper.TwoPi) % MathHelper.TwoPi;
+
+            return angle <= MathHelper.Pi ? angle : angle - MathHelper.TwoPi;
         }
     }
 }

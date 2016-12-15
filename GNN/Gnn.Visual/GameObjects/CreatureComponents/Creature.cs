@@ -36,6 +36,7 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
         public Vector2 Momentum { get; set; }
         public float Speed => Momentum.Length();
         public float MomentumAngle => GeomHelper.Angle(0, 0, Momentum.X, Momentum.Y);
+        public float MomentumAngleRelative => GeomHelper.RadRange_Pi(Rotation - MomentumAngle);
 
         internal Vision Eyes;
         internal Brain Brain;
