@@ -1,6 +1,7 @@
 ﻿using Gnn.NeuralNet;
 using Gnn.NeuralNet.Structures;
 using Gnn.NeuralNet.Structures.TransferFunctions;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,11 @@ using System.Threading.Tasks;
 namespace Gnn.Visual.GameObjects.CreatureComponents {
 
     internal class Brain {
-        public TransferFunction Transfer = HyperbolicTangentFunction.Instance;
+        private const int InputCount = Creature.DefEyeCount * 3 + 4;
+        private static readonly int[] HiddenCount = new int[] { 20, 6 };
+        private const int OutputCount = 3;
+        public static TransferFunction Transfer = HyperbolicTangentFunction.Instance;
+
         public float MinOutput => Transfer.YMin;
         public float MaxOutput => Transfer.YMax;
         public float MinInput => Transfer.XMin;
@@ -25,11 +30,13 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
 
         public Brain(Creature owner, Network initNet = null) {
             Owner = owner;
-            Net = initNet ?? CreateDefaultNet(Owner.Eyes.Count + 1);
+            Net = initNet ?? CreateDefaultNet();
         }
 
         public void Update() {
             var memOut = Outp_Mem;
+
+            var indx = 0;
 
             for(int e = 0; e < Owner.Eyes.Count; e++) {
                 var cur = Owner.Eyes.Visible[e];
@@ -37,17 +44,20 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
                 var inpR = Transfer.ShiftRange(cur.X, 0, 1);
                 var inpG = Transfer.ShiftRange(cur.Y, 0, 1);
                 var inpA = Transfer.ShiftRange(cur.Z, 0, 1);
-                Net.Input[e * 3 + 0].Value = inpR;
-                Net.Input[e * 3 + 1].Value = inpG;
-                Net.Input[e * 3 + 2].Value = inpA;
+                Net.Input[indx++].Value = inpR;
+                Net.Input[indx++].Value = inpG;
+                Net.Input[indx++].Value = inpA;
             }
 
-            Net.Input[Owner.Eyes.Count + 0].Value = Transfer.ShiftRange(Owner.Health, 0, Creature.MaxHealth);
-            Net.Input[Owner.Eyes.Count + 1].Value = memOut;
+            Net.Input[indx++].Value = Transfer.ShiftRange(Owner.Health, 0, Creature.MaxHealth);
+            Net.Input[indx++].Value = memOut;
+
+            Net.Input[indx++].Value = Transfer.ShiftRange(Owner.Speed, 0, Creature.MaxAccelerationPerSecond * 8);
+            Net.Input[indx++].Value = Transfer.ShiftRange(Owner.MomentumAngleRelative, -MathHelper.Pi, MathHelper.Pi);
         }
 
-        private Network CreateDefaultNet(int inpCount) {
-            return Network.Create(Transfer, true, inpCount * 3, 3, 15, 5);
+        private static Network CreateDefaultNet() {
+            return Network.Create(Transfer, true, InputCount, OutputCount, HiddenCount);
         }
     }
 }

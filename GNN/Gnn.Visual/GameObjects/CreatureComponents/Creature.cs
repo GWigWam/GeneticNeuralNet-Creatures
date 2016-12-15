@@ -92,7 +92,23 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
             base.Draw(sb);
 
             if(ShowInfo) {
-                sb.DrawString(World.Game.Res.FConsolas, $"{Health}", CenterPosition + new Vector2(0, Radius + 3), Microsoft.Xna.Framework.Color.Black);
+                const int spacing = 6;
+                var netStr = string.Empty;
+                bool bottomReached = false;
+                for(int depth = 0; !bottomReached; depth++) {
+                    netStr += depth < Brain.Net.Input.Length ? $"{Brain.Net.Input[depth].Output,-spacing:n2} ->" : "         ";
+
+                    for(int hid = 0; hid < Brain.Net.Hidden.Length; hid++) {
+                        netStr += depth < Brain.Net.Hidden[hid].Length ? $" |{Brain.Net.Hidden[hid][depth].Output,-spacing:n2}" : "        ";
+                    }
+
+                    netStr += depth < Brain.Net.Output.Length ? $" -> {Brain.Net.Output[depth].Output,-spacing:n2}" : "          ";
+
+                    netStr += "\n";
+                    bottomReached = depth >= Math.Max(Brain.Net.Input.Length, Brain.Net.Output.Length) && depth >= Brain.Net.Hidden.Max(h => h.Length);
+                }
+
+                sb.DrawString(World.Game.Res.FConsolas, $"{Health}\n{netStr}", CenterPosition + new Vector2(0, Radius + 3), Microsoft.Xna.Framework.Color.Black);
                 DrawHelper.DrawLine(sb, CenterPosition, GeomHelper.GetRelative(CenterPosition, MomentumAngle, Speed * 30), 1, Microsoft.Xna.Framework.Color.DarkBlue);
             }
         }
