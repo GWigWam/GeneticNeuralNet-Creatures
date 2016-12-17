@@ -27,17 +27,19 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
         }
 
         public void Move(float secsPassed, Vector2 accelerationDelta) {
-            if(Random.NextDouble() <= accelerationDelta.Length() * SpawnParticlesPerAcceleration) {
-                var momentum = accelerationDelta / 3;
-                momentum.X += momentum.X * (float)(Random.NextDouble() - 0.5);
-                momentum.Y += momentum.Y * (float)(Random.NextDouble() - 0.5);
-                momentum = (momentum / secsPassed) * -1;
-                var @new = new PropellantParticle(Res.TPropellantParticle, Owner.CenterPosition, momentum);
-                Particles.Add(@new);
-            }
+            if(!Owner.World.HighPerformanceMode) {
+                if(Random.NextDouble() <= accelerationDelta.Length() * SpawnParticlesPerAcceleration) {
+                    var momentum = accelerationDelta / 3;
+                    momentum.X += momentum.X * (float)(Random.NextDouble() - 0.5);
+                    momentum.Y += momentum.Y * (float)(Random.NextDouble() - 0.5);
+                    momentum = (momentum / secsPassed) * -1;
+                    var @new = new PropellantParticle(Res.TPropellantParticle, Owner.CenterPosition, momentum);
+                    Particles.Add(@new);
+                }
 
-            foreach(var part in Particles) {
-                part.Move(secsPassed);
+                foreach(var part in Particles) {
+                    part.Move(secsPassed);
+                }
             }
 
             Particles.RemoveAll(p => p.Age > ParticleMaxAgeSec);

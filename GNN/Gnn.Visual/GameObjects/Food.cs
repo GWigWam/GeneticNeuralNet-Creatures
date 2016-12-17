@@ -31,7 +31,9 @@ namespace Gnn.Visual.GameObjects {
         }
 
         public override void Move(float secsPassed) {
-            Rotation += (0.01f * (float)Math.Pow((health / MaxHealth) * 100, 1.3)) * secsPassed;
+            if(!World.HighPerformanceMode) {
+                Rotation += (0.01f * (float)Math.Pow((health / MaxHealth) * 100, 1.3)) * secsPassed;
+            }
         }
 
         public override void Draw(SpriteBatch sb) {

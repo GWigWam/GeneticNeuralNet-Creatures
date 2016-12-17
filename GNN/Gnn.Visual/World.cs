@@ -34,6 +34,9 @@ namespace Gnn.Visual {
         public int GenerationCount { get; private set; }
 
         private string StatusStr = string.Empty;
+
+        public bool HighPerformanceMode => Game.FastMode;
+
         public MainGame Game { get; }
 
         public World(MainGame game) {
