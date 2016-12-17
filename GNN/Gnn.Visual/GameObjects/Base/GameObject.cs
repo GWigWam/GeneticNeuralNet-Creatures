@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Gnn.Visual.GameObjects.Base {
 
-    public abstract class GameObject : Drawable {
+    public abstract class GameObject : Drawable, IMoves, IInteracts {
         public Vector2 CenterPosition { get; set; }
 
         public int Radius { get; }

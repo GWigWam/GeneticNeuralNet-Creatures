@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Gnn.Visual.GameObjects.CreatureComponents {
 
-    internal class Propellant {
+    internal class Propellant : Base.IDrawable {
         private Creature Owner;
         private MainGameContent Res;
         private Random Random;
@@ -52,7 +52,7 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
         }
     }
 
-    internal class PropellantParticle : Drawable {
+    internal class PropellantParticle : Drawable, IMoves {
         public Vector2 Position { get; set; }
         public Vector2 Momentum { get; set; }
         public float Age { get; private set; }
@@ -65,7 +65,7 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
             Momentum = momentum;
         }
 
-        internal void Move(float secsPassed) {
+        public void Move(float secsPassed) {
             Age += secsPassed;
             Position += Momentum * secsPassed;
             Rotation += MathHelper.PiOver2;

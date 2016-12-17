@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Gnn.Visual.GameObjects.Base {
 
-    public abstract class Drawable {
+    public abstract class Drawable : IDrawable {
         public virtual Texture2D Texture { get; set; }
 
         private float rotation = 0;
