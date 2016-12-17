@@ -16,10 +16,10 @@ using System.Threading.Tasks;
 namespace Gnn.Visual {
 
     public class World {
-        public const int CreatureCount = 150;
-        public const float FoodToCreatureRatio = 2f;
+        public const int CreatureCount = 160;
+        public const float FoodToCreatureRatio = 5f;
 
-        public const int WorldSize = 2500;
+        public const int WorldSize = 5200;
         public const float MaxWorldTimeSec = 90f;
 
         private static TransferFunction Transfer = HyperbolicTangentFunction.Instance;

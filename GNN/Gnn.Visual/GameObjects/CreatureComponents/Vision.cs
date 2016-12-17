@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Gnn.Visual.GameObjects.CreatureComponents {
 
     internal class Vision {
-        public const int VisionDistance = 200;
+        public const int VisionDistance = 250;
         private const float EyeDistanceRad = MathHelper.TwoPi / 12f;
 
         private Creature Owner;
