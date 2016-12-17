@@ -41,10 +41,12 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
 
         internal Vision Eyes;
         internal Brain Brain;
+        internal Propellant Propellant;
 
         public Creature(World world, MainGameContent res, Vector2 position, int eyeCount = DefEyeCount, Network initNw = null) : base(world, res.TCreature, position) {
             Eyes = new Vision(this, eyeCount);
             Brain = new Brain(this, initNw);
+            Propellant = new Propellant(this, res, world.Game.Rand);
         }
 
         public override void Move(float secsPassed) {
@@ -66,6 +68,8 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
                 Momentum += accelerationDelta;
 
                 Health -= accelerationFraction * HealthLostOnMaxAcceleration * secsPassed;
+
+                Propellant.Move(secsPassed, accelerationDelta);
             }
             CenterPosition += Momentum * secsPassed;
         }
@@ -92,6 +96,7 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
         }
 
         public override void Draw(SpriteBatch sb) {
+            Propellant.Draw(sb);
             Eyes.Draw(sb);
             base.Draw(sb);
 

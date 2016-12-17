@@ -15,6 +15,7 @@ namespace Gnn.Visual {
         public Texture2D TTest { get; private set; }
         public Texture2D TCreature { get; private set; }
         public Texture2D TFood { get; private set; }
+        public Texture2D TPropellantParticle { get; private set; }
 
         public void Init(ContentManager content) {
             FConsolas = content.Load<SpriteFont>("Consolas");
@@ -23,6 +24,7 @@ namespace Gnn.Visual {
             TTest = content.Load<Texture2D>("test");
             TCreature = content.Load<Texture2D>("Creature");
             TFood = content.Load<Texture2D>("Food");
+            TPropellantParticle = content.Load<Texture2D>("Propellant");
         }
     }
 }
