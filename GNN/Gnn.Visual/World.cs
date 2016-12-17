@@ -20,7 +20,7 @@ namespace Gnn.Visual {
         public const float FoodToCreatureRatio = 2f;
 
         public const int WorldSize = 2500;
-        public const float MaxWorldTimeSec = 100f;
+        public const float MaxWorldTimeSec = 90f;
 
         private static TransferFunction Transfer = HyperbolicTangentFunction.Instance;
 
@@ -93,7 +93,7 @@ namespace Gnn.Visual {
             var gen = new Genetic.Genetic(0.04f, 0.001f, () => Helpers.MathHelper.Random(Transfer.XMin, Transfer.XMax));
             var minLifeSpan = creatures.Min(c => c.Lifespan);
             var indvdl = creatures
-                .Select(c => c.Brain.Net.ToIndividual(c.Lifespan - minLifeSpan));
+                .Select(c => c.Brain.Net.ToIndividual((c.Lifespan - minLifeSpan) + (c.Health / Creature.IdleHealthLossPerSecond / 2f)));
             var res = gen.Apply(indvdl).ToArray();
 
             for(int i = 0; i < creatures.Length; i++) {
