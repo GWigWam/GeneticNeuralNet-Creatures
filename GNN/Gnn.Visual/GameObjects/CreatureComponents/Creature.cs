@@ -14,14 +14,15 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
     public class Creature : GameObject, IWorldVisible {
         internal const int DefEyeCount = 5;
 
-        internal const float MaxRotPerSecond = (MathHelper.Pi / 2);
+        internal const float MaxRotPerSecond = MathHelper.Pi / 2;
 
-        internal const float MaxAccelerationPerSecond = 2.5f;
-        internal const float AccelerationLossPerSecond = 0.8f;
+        internal const float MaxAccelerationPerSecond = 20f;
+        internal const float AccelerationLossPerSecond = 20f;
+        internal const float MaxSpeedPerSec = 600;
 
-        internal const float HealthLostPerAcceleration = 1 / 15f;
+        internal const float HealthLostOnMaxAcceleration = 1 / 20f;
         internal const float IdleHealthLossPerSecond = 1f / 10f;
-        internal const float MaxHealth = 4f;
+        internal const float MaxHealth = 5f;
 
         public Vector2 Color => new Vector2(1, 0);
 
@@ -57,13 +58,15 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
                 Math.Min(0, Momentum.Y + AccelerationLossPerSecond * (float)Math.Abs(Math.Sin(Rotation)) * secsPassed);
             Momentum = new Vector2(momLostX, momLostY);
 
-            var accelerationFraction = Helpers.MathHelper.ShiftRange(Brain.Outp_Speed, Brain.MinOutput, Brain.MaxOutput, 0, 1);
-            var acceleration = accelerationFraction * MaxAccelerationPerSecond * secsPassed;
-            var accelerationDelta = GeomHelper.CreateVector(Rotation, acceleration);
-            Momentum += accelerationDelta;
-            CenterPosition += Momentum;
+            if(Speed < MaxSpeedPerSec * secsPassed) {
+                var accelerationFraction = Helpers.MathHelper.ShiftRange(Brain.Outp_Speed, Brain.MinOutput, Brain.MaxOutput, 0, 1);
+                var acceleration = accelerationFraction * (MaxAccelerationPerSecond + AccelerationLossPerSecond) * secsPassed;
+                var accelerationDelta = GeomHelper.CreateVector(Rotation, acceleration);
+                Momentum += accelerationDelta;
 
-            Health -= accelerationFraction * HealthLostPerAcceleration * secsPassed;
+                Health -= accelerationFraction * HealthLostOnMaxAcceleration * secsPassed;
+            }
+            CenterPosition += Momentum;
         }
 
         public override void Interact(float secsPassed) {
@@ -108,7 +111,7 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
                     bottomReached = depth >= Math.Max(Brain.Net.Input.Length, Brain.Net.Output.Length) && depth >= Brain.Net.Hidden.Max(h => h.Length);
                 }
 
-                sb.DrawString(World.Game.Res.FConsolas, $"{Health}\n{netStr}", CenterPosition + new Vector2(0, Radius + 3), Microsoft.Xna.Framework.Color.Black);
+                sb.DrawString(World.Game.Res.FConsolas, $"H={Health}\n{netStr}", CenterPosition + new Vector2(0, Radius + 3), Microsoft.Xna.Framework.Color.Black);
                 DrawHelper.DrawLine(sb, CenterPosition, GeomHelper.GetRelative(CenterPosition, MomentumAngle, Speed * 30), 1, Microsoft.Xna.Framework.Color.DarkBlue);
             }
         }
