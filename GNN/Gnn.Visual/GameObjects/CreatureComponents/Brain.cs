@@ -12,8 +12,8 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
 
     internal class Brain {
         private const int InputCount = Creature.DefEyeCount * 3 + 4;
-        private static readonly int[] HiddenCount = new int[] { 20, 6 };
-        private const int OutputCount = 3;
+        private static readonly int[] HiddenCount = new int[] { 25 };
+        private const int OutputCount = 4;
         public static TransferFunction Transfer = HyperbolicTangentFunction.Instance;
 
         public float MinOutput => Transfer.YMin;
@@ -26,7 +26,10 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
 
         public float Outp_Rotation => Net.Output[0].Output;
         public float Outp_Speed => Net.Output[1].Output;
-        public float Outp_Mem => Net.Output[2].Output;
+        public float Outp_Attack => Net.Output[2].Output;
+        public float Outp_Mem => Net.Output[3].Output;
+
+        public bool ShouldAttack => MeetsThreshold(Outp_Attack, 0.9f);
 
         public Brain(Creature owner, Network initNet = null) {
             Owner = owner;
@@ -58,6 +61,10 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
 
         private static Network CreateDefaultNet() {
             return Network.Create(Transfer, true, InputCount, OutputCount, HiddenCount);
+        }
+
+        public bool MeetsThreshold(float input, float fraction) {
+            return Helpers.MathHelper.Normalize(input, MinOutput, MaxOutput) > fraction;
         }
     }
 }

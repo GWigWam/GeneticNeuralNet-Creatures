@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 namespace Gnn.Visual.GameObjects {
 
     public class Food : GameObject, IWorldVisible {
-        private const float MaxHealth = 0.5f;
-        private const float AddHealthPerSecond = MaxHealth / 12f;
+        internal const float MaxHealth = 0.5f;
+        internal const float AddHealthPerSecond = MaxHealth / 12f;
 
         private float health;
 

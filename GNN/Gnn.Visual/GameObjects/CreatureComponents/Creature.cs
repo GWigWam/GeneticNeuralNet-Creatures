@@ -42,11 +42,13 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
         internal Vision Eyes;
         internal Brain Brain;
         internal Propellant Propellant;
+        internal Attack Attack;
 
         public Creature(World world, MainGameContent res, Vector2 position, int eyeCount = DefEyeCount, Network initNw = null) : base(world, res.TCreature, position) {
             Eyes = new Vision(this, eyeCount);
             Brain = new Brain(this, initNw);
             Propellant = new Propellant(this, res, world.Game.Rand);
+            Attack = new Attack(this, res, world.Game.Rand);
         }
 
         public override void Move(float secsPassed) {
@@ -75,27 +77,30 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
         }
 
         public override void Interact(float secsPassed) {
-            base.Interact(secsPassed);
-            var notMe = World.ActiveGameObjs.Where(g => g != this);
-            Eyes.Update(notMe);
+            if(Health > 0) {
+                base.Interact(secsPassed);
+                var notMe = World.ActiveGameObjs.Where(g => g != this);
+                Eyes.Update(notMe);
 
-            Brain.Update();
+                Brain.Update();
+                Attack.Interact(secsPassed);
 
-            foreach(var food in World.ActiveGameObjs.OfType<Food>()) {
-                var dst = Vector2.Distance(food.CenterPosition, CenterPosition);
-                if(dst < Radius + food.Radius) {
-                    Health += food.Health;
-                    food.Destory();
+                foreach(var food in World.ActiveGameObjs.OfType<Food>()) {
+                    var dst = Vector2.Distance(food.CenterPosition, CenterPosition);
+                    if(dst < Radius + food.Radius) {
+                        Health += food.Health;
+                        food.Destory();
+                    }
                 }
-            }
 
-            Health -= (IdleHealthLossPerSecond * secsPassed);
-            if(Health < 0) {
+                Health -= (IdleHealthLossPerSecond * secsPassed);
+            } else {
                 Active = false;
             }
         }
 
         public override void Draw(SpriteBatch sb) {
+            Attack.Draw(sb);
             Propellant.Draw(sb);
             Eyes.Draw(sb);
             base.Draw(sb);

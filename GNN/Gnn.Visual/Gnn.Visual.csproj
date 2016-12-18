@@ -46,6 +46,7 @@
     <Compile Include="DrawHelper.cs" />
     <Compile Include="GameObjects\Base\Interfaces.cs" />
     <Compile Include="GameObjects\Base\IWorldVisible.cs" />
+    <Compile Include="GameObjects\CreatureComponents\Attack.cs" />
     <Compile Include="GameObjects\CreatureComponents\Brain.cs" />
     <Compile Include="GameObjects\CreatureComponents\Propellant.cs" />
     <Compile Include="GameObjects\CreatureComponents\Vision.cs" />
