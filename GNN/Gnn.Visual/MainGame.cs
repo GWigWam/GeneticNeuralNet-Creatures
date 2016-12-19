@@ -246,9 +246,15 @@ namespace Gnn.Visual {
 
         private void SelectGameObject(Point pos) {
             var clicked = World.ActiveGameObjs.FirstOrDefault(g => {
-                var l = Vector2.Transform(g.CenterPosition, Cam.Transform);
-                var res = Vector2.Distance(l, pos.ToVector2()) < g.Radius;
-                return res;
+                if (g is GameObjects.CreatureComponents.Creature)
+                {
+                    var l = Vector2.Transform(g.CenterPosition, Cam.Transform);
+                    var res = Vector2.Distance(l, pos.ToVector2()) < g.Radius;
+                    return res;
+                }
+                else {
+                    return false;
+                }
             });
             if(clicked != null) {
                 if(clicked != Following) {
