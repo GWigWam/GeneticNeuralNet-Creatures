@@ -16,7 +16,6 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
 
         private Creature Owner;
         private MainGameContent Res;
-        private Random Random;
 
         public override int DrawX => (int)Math.Round(Owner.CenterPosition.X);
         public override int DrawY => (int)Math.Round(Owner.CenterPosition.Y);
@@ -24,11 +23,10 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
         public float TimeSinceLastAttack { get; private set; } = float.MaxValue;
         public int Radius { get; }
 
-        public Attack(Creature owner, MainGameContent res, Random rand) : base(res.TAttack, DrawableOrigin.Center) {
+        public Attack(Creature owner, MainGameContent res) : base(res.TAttack, DrawableOrigin.Center) {
             Owner = owner;
             Res = res;
             Radius = Res.TAttack.Width / 2;
-            Random = rand;
         }
 
         public void DoAttack() {
@@ -41,7 +39,7 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
                         var hp = hit.Health > Food.MaxHealth ? Food.MaxHealth : hit.Health;
                         hit.Health -= hp;
 
-                        var pos = GeomHelper.RandomPointInCircel(Random, hit.Radius) + hit.CenterPosition;
+                        var pos = GeomHelper.RandomPointInCircel(ThreadSafeRandom.Instance, hit.Radius) + hit.CenterPosition;
                         var newFood = new Food(Owner.World, Res, pos) {
                             Health = hp
                         };

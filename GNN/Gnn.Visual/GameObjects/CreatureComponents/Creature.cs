@@ -47,8 +47,8 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
         public Creature(World world, MainGameContent res, Vector2 position, int eyeCount = DefEyeCount, Network initNw = null) : base(world, res.TCreature, position) {
             Eyes = new Vision(this, eyeCount);
             Brain = new Brain(this, initNw);
-            Propellant = new Propellant(this, res, world.Game.Rand);
-            Attack = new Attack(this, res, world.Game.Rand);
+            Propellant = new Propellant(this, res);
+            Attack = new Attack(this, res);
         }
 
         public override void Move(float secsPassed) {

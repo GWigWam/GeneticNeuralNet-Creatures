@@ -35,7 +35,6 @@ namespace Gnn.Visual {
 
         public Cam2D Cam { get; private set; }
         public MainGameContent Res { get; private set; }
-        public Random Rand = new Random(4);
 
         public bool FastMode { get; set; }
         public int TicksPerUpdate { get; set; } = 1;
