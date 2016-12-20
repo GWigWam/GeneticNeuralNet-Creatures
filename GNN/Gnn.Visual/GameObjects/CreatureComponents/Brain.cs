@@ -41,7 +41,7 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
 
             var indx = 0;
 
-            for(int e = 0; e < Owner.Eyes.Count; e++) {
+            for(int e = 0; e < Owner.Eyes.EyeCount; e++) {
                 var cur = Owner.Eyes.Visible[e];
 
                 var inpR = Transfer.ShiftRange(cur.X, 0, 1);

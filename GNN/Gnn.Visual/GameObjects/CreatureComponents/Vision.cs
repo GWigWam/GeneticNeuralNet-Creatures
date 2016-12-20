@@ -10,71 +10,72 @@ using System.Threading.Tasks;
 namespace Gnn.Visual.GameObjects.CreatureComponents {
 
     internal class Vision : Base.IDrawable {
-        public const int VisionDistance = 250;
-        private const float EyeDistanceRad = MathHelper.TwoPi / 12f;
+        internal const float VisionDistance = 250;
+        internal const float EyeSeparationAngle = MathHelper.TwoPi / 16f;
 
         private Creature Owner;
         private float[] EyeAngles;
 
         public Vector3[] Visible { get; private set; }
-        public Tuple<Vector2, Vector2>[] VisionLines { get; private set; }
 
-        public int Count { get; }
+        public int EyeCount { get; }
 
         public Vision(Creature owner, int eyeCount) {
             Owner = owner;
-            Count = eyeCount;
+            EyeCount = eyeCount;
 
             EyeAngles = new float[eyeCount];
             Visible = new Vector3[eyeCount];
-            VisionLines = new Tuple<Vector2, Vector2>[eyeCount];
-            for(int i = 0; i < VisionLines.Length; i++) {
-                VisionLines[i] = new Tuple<Vector2, Vector2>(new Vector2(), new Vector2());
-            }
 
             int index = 0;
-            for(float f = -((eyeCount - 1f) / 2f); f <= ((eyeCount - 1f) / 2f); f++) {
-                EyeAngles[index++] = f * EyeDistanceRad;
+            for(float a = -((eyeCount - 1) / 2f); a <= ((eyeCount - 1) / 2f); a++) {
+                EyeAngles[index++] = a * EyeSeparationAngle;
             }
         }
 
         public void Update(IEnumerable<GameObject> gameObjs) {
-            for(int ei = 0; ei < Count; ei++) {
-                var curAngle = Owner.Rotation + EyeAngles[ei];
-                var curVisLine = CalcVissionLine(curAngle);
-                VisionLines[ei] = curVisLine;
+            var curVision = new Tuple<GameObject, float>[EyeCount];
+            foreach (var curObj in gameObjs) {
+                var dist = Vector2.Distance(Owner.CenterPosition, curObj.CenterPosition) - Owner.Radius - curObj.Radius;
+                if (dist < VisionDistance) {
+                    var curObjRelAngle = GeomHelper.Angle(Owner.CenterPosition, curObj.CenterPosition);
 
-                GameObject closestObj = null;
-                float closestDst = VisionDistance;
-                foreach(var curGameObj in gameObjs) {
-                    var dist = Vector2.Distance(Owner.CenterPosition, curGameObj.CenterPosition) - Owner.Radius - curGameObj.Radius;
-                    if(dist < closestDst) {
-                        if(GeomHelper.LineIntersectsCircle(curVisLine.Item1, curVisLine.Item2, curGameObj.CenterPosition, curGameObj.Radius)) {
-                            closestObj = curGameObj;
-                            closestDst = dist;
+                    var closestEyeAngleIndex = -1;
+                    var closestEyeAngleDif = float.MaxValue;
+                    for (int ei = 0; ei < EyeCount; ei++) {
+                        var relEyeAngle = EyeAngles[ei] + Owner.Rotation;
+                        var anglDif = Math.Abs(GeomHelper.RadRange_TwoPi(curObjRelAngle) - GeomHelper.RadRange_TwoPi(relEyeAngle));
+                        if (anglDif < closestEyeAngleDif && anglDif < EyeSeparationAngle / 2) {
+                            closestEyeAngleIndex = ei;
+                            closestEyeAngleDif = anglDif;
                         }
                     }
+                    if (closestEyeAngleIndex != -1) {
+                        curVision[closestEyeAngleIndex] = Tuple.Create(curObj, dist);
+                    }
                 }
+            }
 
-                var col = GetColor(closestObj);
-                var closeness = 1 - (closestDst / VisionDistance);
-                Visible[ei] = new Vector3(col.X, col.Y, closeness);
+            for (int ei = 0; ei < EyeCount; ei++) {
+                var curVis = curVision[ei];
+                if (curVis != null) {
+                    var col = GetColor(curVis.Item1);
+                    var closeness = 1 - (curVis.Item2 / VisionDistance);
+                    Visible[ei] = new Vector3(col.X, col.Y, closeness);
+                } else {
+                    Visible[ei] = Vector3.Zero;
+                }
             }
         }
 
         public void Draw(SpriteBatch sb) {
-            for(int i = 0; i < Count; i++) {
-                var vis = Visible[i];
-
-                var col = new Color(vis.X, vis.Y, 0, vis.Z);
-                DrawHelper.DrawLine(sb, VisionLines[i].Item1, VisionLines[i].Item2, 1, col);
+            for (int ei = 0; ei < EyeCount; ei++) {
+                var curVis = Visible[ei];
+                var col = new Color(curVis.X, curVis.Y, 0, curVis.Z);
+                if(col.A > 0) {
+                    DrawHelper.DrawLine(sb, Owner.CenterPosition, GeomHelper.GetRelative(Owner.CenterPosition, EyeAngles[ei] + Owner.Rotation, VisionDistance), 1, col);
+                }
             }
-        }
-
-        private Tuple<Vector2, Vector2> CalcVissionLine(float angle) {
-            var lineStart = GeomHelper.GetRelative(Owner.CenterPosition, angle, Owner.Radius);
-            var lineEnd = GeomHelper.GetRelative(Owner.CenterPosition, angle, VisionDistance + Owner.Radius);
-            return Tuple.Create(lineStart, lineEnd);
         }
 
         public static Vector2 GetColor(GameObject go) {
