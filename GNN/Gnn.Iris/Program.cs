@@ -25,7 +25,8 @@ namespace Gnn.Iris {
             var indivs = new Individual[NetworkCount];
 
             int genIndx = 0;
-            float avgFitness = float.MaxValue;
+            float avgFitness;
+            float bestFitness;
             var startT = Environment.TickCount;
             do {
                 var t = Environment.TickCount;
@@ -40,9 +41,10 @@ namespace Gnn.Iris {
                     networks[n].SetWeights(res[n]);
                 }
                 avgFitness = indivs.Average(ind => ind.Fitness);
-                Console.Write($" - Avg fitness: {avgFitness:N3}, variety: {indivs.AvgVariety():N3}, time {Environment.TickCount - t}Ms");
+                bestFitness = indivs.Max(ind => ind.Fitness);
+                Console.Write($" - Fitness: avg={avgFitness:N3} max={bestFitness:N3}, variety: {indivs.AvgVariety():N3}, time {Environment.TickCount - t}Ms");
                 genIndx++;
-            } while(avgFitness < 0.94);
+            } while(bestFitness < 0.96);
 
             Console.Write($"\n\nDone in {Environment.TickCount - startT}Ms");
             Console.ReadKey();
