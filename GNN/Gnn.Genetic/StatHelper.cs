@@ -14,7 +14,6 @@ namespace Gnn.Genetic {
 
             var res = new float[source.First().Values.Length];
             for(int i = 0; i < source.First().Values.Length; i++) {
-                //res[i] = MathHelper.StdDeviation(source.Select(ind => ind.Values[i]), Grouptype.Population);
                 res[i] = MathHelper.StdDeviation(vals.Select(a => a[i]).ToArray(), Grouptype.Population);
             }
             return res;

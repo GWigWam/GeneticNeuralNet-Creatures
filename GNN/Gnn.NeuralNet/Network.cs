@@ -84,6 +84,9 @@ namespace Gnn.NeuralNet {
             }
         }
 
+        /// <summary>
+        /// Returns a random weight value, 95% (2 stdev) of weights will be between the transfer functions min and max
+        /// </summary>
         private static float RandomWeight(TransferFunction transfer) {
             var xRange = Math.Abs(transfer.XMax - transfer.XMin);
             // 95% falls whitin 2 standard deviations (instead of  68% for 1)
