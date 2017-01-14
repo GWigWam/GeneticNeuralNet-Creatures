@@ -12,7 +12,7 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
     internal class Attack : Drawable, IInteracts {
         internal const float AttackCooldownSec = 3.5f;
         internal const float AttackVisibleSec = 0.2f;
-        internal const float AttackHealthCost = 0.2f;
+        internal const float AttackHealthCost = 0.1f;
 
         private Creature Owner;
         private MainGameContent Res;

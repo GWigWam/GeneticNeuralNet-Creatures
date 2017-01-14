@@ -65,7 +65,7 @@ namespace Gnn.Visual {
             FoodObjs.RemoveAll(f => !f.Active);
             var shortage = (ActiveGameObjs.OfType<Creature>().Count() * FoodToCreatureRatio) - FoodObjs.Count;
             var rand = ThreadSafeRandom.Instance;
-            for (int i = 0; i < shortage; i++) {
+            for(int i = 0; i < shortage; i++) {
                 var @new = new Food(this, Game.Res, GeomHelper.RandomPointInCircel(rand, WorldSize));
                 FoodObjs.Add(@new);
             }
@@ -84,7 +84,7 @@ namespace Gnn.Visual {
 
         private void InitPopulate() {
             var rand = ThreadSafeRandom.Instance;
-            for (int i = 0; i < CreatureCount; i++) {
+            for(int i = 0; i < CreatureCount; i++) {
                 var @new = new Creature(this, Game.Res, GeomHelper.RandomPointInCircel(rand, WorldSize));
                 CreatureObjs[i] = @new;
             }
@@ -102,7 +102,7 @@ namespace Gnn.Visual {
             var res = gen.Apply(indvdl).ToArray();
 
             var rand = ThreadSafeRandom.Instance;
-            for (int i = 0; i < creatures.Length; i++) {
+            for(int i = 0; i < creatures.Length; i++) {
                 var nw = creatures[i].Brain.Net.SetWeights(res[i]);
                 var @new = new Creature(this, Game.Res, GeomHelper.RandomPointInCircel(rand, WorldSize), initNw: nw);
                 CreatureObjs[i] = @new;
