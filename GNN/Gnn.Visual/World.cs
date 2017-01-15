@@ -1,4 +1,5 @@
 ﻿using Gnn.Genetic;
+using Gnn.Genetic.Params;
 using Gnn.NeuralNet;
 using Gnn.NeuralNet.Structures.TransferFunctions;
 using Gnn.Visual.GameObjects;
@@ -39,12 +40,16 @@ namespace Gnn.Visual {
 
         public MainGame Game { get; }
 
+        private GeneticParamsProvider genParams { get; }
+
         public World(MainGame game) {
             Game = game;
 
             CreatureObjs = new Creature[CreatureCount];
             FoodObjs = new List<Food>();
             ActiveGameObjs = new GameObject[0];
+
+            genParams = new ConstantParamsProvider(0.04f, 0.001f).GetParams;
         }
 
         public void Initialize() {
@@ -95,7 +100,7 @@ namespace Gnn.Visual {
             FoodObjs.Clear();
             var creatures = AllGameObjs.OfType<Creature>().ToArray();
 
-            var gen = new Genetic.Genetic(0.04f, 0.001f, () => Helpers.MathHelper.Random(Transfer.XMin, Transfer.XMax));
+            var gen = new Genetic.Genetic(genParams, () => Helpers.MathHelper.Random(Transfer.XMin, Transfer.XMax));
             var minLifeSpan = creatures.Min(c => c.Lifespan);
             var indvdl = creatures
                 .Select(c => c.Brain.Net.ToIndividual((c.Lifespan - minLifeSpan) + (c.Health / Creature.IdleHealthLossPerSecond / 2f)));

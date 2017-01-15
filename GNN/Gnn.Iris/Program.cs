@@ -1,4 +1,5 @@
 ﻿using Gnn.Genetic;
+using Gnn.Genetic.Params;
 using Gnn.Genetic.Procedures;
 using Gnn.NeuralNet;
 using Gnn.NeuralNet.Structures.TransferFunctions;
@@ -21,7 +22,7 @@ namespace Gnn.Iris {
             var data = DataReader.ReadFromFile("data/iris.data").OrderByDescending(i => i.SepalWidth).ToArray();
             data = NormalizeData(data, Transfer.XMin, Transfer.XMax).ToArray();
             var networks = GenerateNetworks().ToArray();
-            var genetic = new Genetic.Genetic(0.02F, 0.001F, NextFloat);
+            var genetic = new Genetic.Genetic(new ConstantParamsProvider(0.02F, 0.001F).GetParams, NextFloat);
             var indivs = new Individual[NetworkCount];
 
             int genIndx = 0;
