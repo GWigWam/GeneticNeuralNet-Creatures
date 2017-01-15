@@ -32,7 +32,6 @@ namespace Gnn.Visual {
         public IEnumerable<GameObject> AllGameObjs => CreatureObjs.Cast<GameObject>().Concat(FoodObjs);
 
         public float WorldTotalTimeSec { get; private set; }
-        public int GenerationCount { get; private set; }
 
         private string StatusStr = string.Empty;
 
@@ -40,7 +39,7 @@ namespace Gnn.Visual {
 
         public MainGame Game { get; }
 
-        private GeneticParamsProvider genParams { get; }
+        public Genetic.Genetic GeneticAlgorithm { get; private set; }
 
         public World(MainGame game) {
             Game = game;
@@ -49,7 +48,8 @@ namespace Gnn.Visual {
             FoodObjs = new List<Food>();
             ActiveGameObjs = new GameObject[0];
 
-            genParams = new ConstantParamsProvider(0.04f, 0.001f).GetParams;
+            var app = new AdaptiveParamsProvider(0.04f, 0.001f);
+            GeneticAlgorithm = new Genetic.Genetic(app.GetParams, () => Helpers.MathHelper.Random(Transfer.XMin, Transfer.XMax));
         }
 
         public void Initialize() {
@@ -96,15 +96,13 @@ namespace Gnn.Visual {
         }
 
         private void RePopulate() {
-            GenerationCount++;
             FoodObjs.Clear();
             var creatures = AllGameObjs.OfType<Creature>().ToArray();
 
-            var gen = new Genetic.Genetic(genParams, () => Helpers.MathHelper.Random(Transfer.XMin, Transfer.XMax));
             var minLifeSpan = creatures.Min(c => c.Lifespan);
-            var indvdl = creatures
+            var indvdls = creatures
                 .Select(c => c.Brain.Net.ToIndividual((c.Lifespan - minLifeSpan) + (c.Health / Creature.IdleHealthLossPerSecond / 2f)));
-            var res = gen.Apply(indvdl).ToArray();
+            var res = GeneticAlgorithm.Apply(indvdls).ToArray();
 
             var rand = ThreadSafeRandom.Instance;
             for(int i = 0; i < creatures.Length; i++) {
@@ -113,7 +111,10 @@ namespace Gnn.Visual {
                 CreatureObjs[i] = @new;
             }
 
-            StatusStr = $"LF: {creatures.Min(c => c.Lifespan)} : {creatures.Max(c => c.Lifespan)} : {creatures.Average(c => c.Lifespan)}\nVar={indvdl.AvgVariety()} Gen#={GenerationCount}";
+            var lastHist = GeneticAlgorithm.History.Last();
+            StatusStr = $"LF: {creatures.Min(c => c.Lifespan)} : {creatures.Max(c => c.Lifespan)} : {creatures.Average(c => c.Lifespan)}";
+            StatusStr += $"\nVar={lastHist.Variety} Gen#={lastHist.GenCount}";
+            StatusStr += $"\nElit={lastHist.UsedParams.ElitismFraction} Mut={lastHist.UsedParams.MutationFraction}";
         }
     }
 }

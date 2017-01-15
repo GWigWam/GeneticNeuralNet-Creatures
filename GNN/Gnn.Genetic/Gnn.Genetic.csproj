@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="ConvertExtensions.cs" />
     <Compile Include="Genetic.cs" />
+    <Compile Include="Params\AdaptiveParamsProvider.cs" />
     <Compile Include="Params\ConstantParamsProvider.cs" />
     <Compile Include="Params\GeneticParams.cs" />
     <Compile Include="Individual.cs" />
