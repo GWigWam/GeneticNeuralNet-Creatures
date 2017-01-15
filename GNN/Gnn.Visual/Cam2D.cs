@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Input;
 namespace Gnn.Visual {
 
     public class Cam2D {
+        private const int BaseArrowScrollSpeedPx = 20;
+
         private bool clicked = false;
         private Point lastClickPos;
         private int previousScrollValue = 0;
@@ -94,6 +96,20 @@ namespace Gnn.Visual {
                 Rotation = 0;
                 Zoom = 1;
                 Center = new Point(ViewWidth / 2, ViewHeight / 2);
+            }
+
+            int pxPerDownTick = (int)(BaseArrowScrollSpeedPx / zoom);
+            if(kState.IsKeyDown(Keys.Down)) {
+                Center += new Point(0, pxPerDownTick);
+            }
+            if(kState.IsKeyDown(Keys.Up)) {
+                Center += new Point(0, -pxPerDownTick);
+            }
+            if(kState.IsKeyDown(Keys.Right)) {
+                Center += new Point(pxPerDownTick, 0);
+            }
+            if(kState.IsKeyDown(Keys.Left)) {
+                Center += new Point(-pxPerDownTick, 0);
             }
         }
     }
