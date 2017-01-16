@@ -10,9 +10,10 @@ using System.Threading.Tasks;
 namespace Gnn.Visual.GameObjects.CreatureComponents {
 
     internal class Attack : Drawable, IInteracts {
-        internal const float AttackCooldownSec = 3.5f;
-        internal const float AttackVisibleSec = 0.2f;
-        internal const float AttackHealthCost = 0.1f;
+        internal const float AttackCooldownSec = 2.5f;
+        internal const float AttackVisibleSec = 0.25f;
+        internal const float AttackHealthCost = 0.4f;
+        internal const float AttackDamage = 1.5f;
 
         private Creature Owner;
         private MainGameContent Res;
@@ -34,16 +35,16 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
                 TimeSinceLastAttack = 0;
                 Owner.Health -= AttackHealthCost;
 
-                foreach(var hit in Owner.World.CreatureObjs.Where(c => c != Owner && Vector2.Distance(Owner.CenterPosition, c.CenterPosition) <= Radius + c.Radius)) {
-                    while(hit.Health > 0) {
-                        var hp = hit.Health > Food.MaxHealth ? Food.MaxHealth : hit.Health;
-                        hit.Health -= hp;
-
-                        var pos = GeomHelper.RandomPointInCircel(ThreadSafeRandom.Instance, hit.Radius) + hit.CenterPosition;
-                        var newFood = new Food(Owner.World, Res, pos) {
-                            Health = hp
-                        };
-                        Owner.World.FoodObjs.Add(newFood);
+                var hits = Owner.World.CreatureObjs
+                    .Where(c => c != Owner && Vector2.Distance(Owner.CenterPosition, c.CenterPosition) <= Radius + c.Radius)
+                    .ToArray();
+                foreach(var hit in hits) {
+                    if(hit.Health > AttackDamage) {
+                        hit.Health -= AttackDamage;
+                        Owner.Health += AttackDamage;
+                    } else {
+                        Owner.Health += hit.Health;
+                        hit.Health = 0;
                     }
                 }
             }
