@@ -17,10 +17,8 @@ namespace Gnn.Visual {
 
         private World World { get; }
 
-        private Keys[] PressedKeys = new Keys[0];
-        private Point? MouseDownPos;
-
-        private GameObjects.Base.GameObject Following;
+        private Keys[] PrevTickPressedKeys = new Keys[0];
+        private Point? MouseDownPos = null;
 
         #region FPS counter
         private int CurSecondNr = -1;
@@ -113,7 +111,6 @@ namespace Gnn.Visual {
 
             HandleInput(mState, kState);
 
-            Cam.Move(mState, kState);
             var mPosRelative = Vector2.Transform(mState.Position.ToVector2(), Matrix.Invert(Cam.Transform)).ToPoint();
 
             if(!FastMode) {
@@ -145,14 +142,6 @@ namespace Gnn.Visual {
         protected override void Draw(GameTime gameTime) {
             var startDraw = Environment.TickCount;
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            if(Following != null) {
-                if(!Following.Active) {
-                    Following = null;
-                } else {
-                    Cam.Center = Following.CenterPosition.ToPoint();
-                }
-            }
 
             spriteBatch.Begin(transformMatrix: Cam.Transform);
             DrawRelative(gameTime);
@@ -206,21 +195,35 @@ namespace Gnn.Visual {
         }
 
         private void HandleInput(MouseState mState, KeyboardState kState) {
-            Func<Keys, bool> p = (k) => kState.IsKeyDown(k) && !PressedKeys.Any(prev => prev == k);
+            //This func returns true if key 'k' was pressed since last tick. Triggers once per key-up-down-up.
+            Func<Keys, bool> keyWentDown = (k) => kState.IsKeyDown(k) && !PrevTickPressedKeys.Any(prev => prev == k);
 
-            if(p(Keys.Escape)) {
+            //This bool indicates LMB was pressed and is now released
+            bool click = false;
+
+            if(!MouseDownPos.HasValue && mState.LeftButton == ButtonState.Pressed) {
+                MouseDownPos = mState.Position;
+            }
+            if(MouseDownPos.HasValue && mState.LeftButton == ButtonState.Released) {
+                MouseDownPos = null;
+                click = true;
+            }
+
+            if(keyWentDown(Keys.Escape)) {
                 Exit();
             }
 
+            Cam.HandleInput(mState, kState, click, World);
+
             //Update speed control
-            if(p(Keys.Add)) {
+            if(keyWentDown(Keys.Add)) {
                 if(kState.IsKeyDown(Keys.LeftControl) || kState.IsKeyDown(Keys.RightControl)) {
                     FastMode = true;
                     TicksPerUpdate = 1;
                 } else {
                     TicksPerUpdate++;
                 }
-            } else if(p(Keys.Subtract)) {
+            } else if(keyWentDown(Keys.Subtract)) {
                 if(kState.IsKeyDown(Keys.LeftControl) || kState.IsKeyDown(Keys.RightControl)) {
                     FastMode = false;
                     TicksPerUpdate = 1;
@@ -229,45 +232,11 @@ namespace Gnn.Visual {
                 }
             }
 
-            if(p(Keys.F1)) {
+            if(keyWentDown(Keys.F1)) {
                 ShowHelp = !ShowHelp;
             }
 
-            PressedKeys = kState.GetPressedKeys();
-
-            if(!MouseDownPos.HasValue && mState.LeftButton == ButtonState.Pressed) {
-                MouseDownPos = mState.Position;
-            }
-            if(MouseDownPos.HasValue && mState.LeftButton == ButtonState.Released) {
-                SelectGameObject(MouseDownPos.Value);
-                MouseDownPos = null;
-            }
-        }
-
-        private void SelectGameObject(Point pos) {
-            var clicked = World.ActiveGameObjs.FirstOrDefault(g => {
-                if (g is GameObjects.CreatureComponents.Creature)
-                {
-                    var l = Vector2.Transform(g.CenterPosition, Cam.Transform);
-                    var res = Vector2.Distance(l, pos.ToVector2()) < g.Radius;
-                    return res;
-                }
-                else {
-                    return false;
-                }
-            });
-            if(clicked != null) {
-                if(clicked != Following) {
-                    if(Following != null) {
-                        Following.ShowInfo = false;
-                    }
-                    Following = clicked;
-                    Following.ShowInfo = true;
-                } else {
-                    Following.ShowInfo = false;
-                    Following = null;
-                }
-            }
+            PrevTickPressedKeys = kState.GetPressedKeys();
         }
     }
 }

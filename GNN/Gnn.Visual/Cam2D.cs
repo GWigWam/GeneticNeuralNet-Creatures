@@ -1,13 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System.Linq;
 
 namespace Gnn.Visual {
 
     public class Cam2D {
         private const int BaseArrowScrollSpeedPx = 20;
 
-        private bool clicked = false;
-        private Point lastClickPos;
         private int previousScrollValue = 0;
 
         public Point Center;
@@ -54,28 +53,64 @@ namespace Gnn.Visual {
             }
         }
 
+        public Point? MouseDownPosTransformed { get; private set; }
+
+        private GameObjects.Base.GameObject Following;
+
         public Cam2D(int viewWidth, int viewHeight, Point? centerPos = null) {
             ViewWidth = viewWidth;
             ViewHeight = viewHeight;
             Center = centerPos ?? new Point(ViewWidth / 2, ViewHeight / 2);
         }
 
-        public void Move(MouseState mState, KeyboardState kState) {
+        public void HandleInput(MouseState mState, KeyboardState kState, bool click, World world) {
             var mouseTransformed = Vector2.Transform(mState.Position.ToVector2(), Matrix.Invert(Transform)).ToPoint();
 
-            if(!clicked && mState.LeftButton == ButtonState.Pressed) {
-                lastClickPos = mouseTransformed;
-                clicked = true;
+            if(!MouseDownPosTransformed.HasValue && mState.LeftButton == ButtonState.Pressed) {
+                MouseDownPosTransformed = mouseTransformed;
+            }
+            if(MouseDownPosTransformed.HasValue && mState.LeftButton == ButtonState.Released) {
+                MouseDownPosTransformed = null;
             }
 
-            if(clicked) {
-                Center += (lastClickPos - mouseTransformed);
+            HandleSelection(click, mouseTransformed, world);
+            HandleZoom(mState, kState);
+            HandleClickDrag(mouseTransformed);
+            HandleArrowScrolling(kState);
+            HandleReset(kState);
+        }
 
-                if(mState.LeftButton == ButtonState.Released) {
-                    clicked = false;
-                }
+        private void HandleClickDrag(Point mouseTransformed) {
+            if(MouseDownPosTransformed.HasValue) {
+                Center += (MouseDownPosTransformed.Value - mouseTransformed);
             }
+        }
 
+        private void HandleReset(KeyboardState kState) {
+            if(kState.IsKeyDown(Keys.Space) && kState.IsKeyDown(Keys.LeftControl)) {
+                Rotation = 0;
+                Zoom = 1;
+                Center = new Point(ViewWidth / 2, ViewHeight / 2);
+            }
+        }
+
+        private void HandleArrowScrolling(KeyboardState kState) {
+            int pxPerDownTick = (int)(BaseArrowScrollSpeedPx / zoom);
+            if(kState.IsKeyDown(Keys.Down)) {
+                Center += new Point(0, pxPerDownTick);
+            }
+            if(kState.IsKeyDown(Keys.Up)) {
+                Center += new Point(0, -pxPerDownTick);
+            }
+            if(kState.IsKeyDown(Keys.Right)) {
+                Center += new Point(pxPerDownTick, 0);
+            }
+            if(kState.IsKeyDown(Keys.Left)) {
+                Center += new Point(-pxPerDownTick, 0);
+            }
+        }
+
+        private void HandleZoom(MouseState mState, KeyboardState kState) {
             if(mState.ScrollWheelValue < previousScrollValue) {
                 if(kState.IsKeyDown(Keys.LeftControl) || kState.IsKeyDown(Keys.RightControl)) {
                     Rotation += 0.5f;
@@ -91,25 +126,34 @@ namespace Gnn.Visual {
                 }
                 previousScrollValue = mState.ScrollWheelValue;
             }
+        }
 
-            if(kState.IsKeyDown(Keys.Space) && kState.IsKeyDown(Keys.LeftControl)) {
-                Rotation = 0;
-                Zoom = 1;
-                Center = new Point(ViewWidth / 2, ViewHeight / 2);
+        private void HandleSelection(bool click, Point mouseTransformed, World world) {
+            if(Following != null) {
+                if(!Following.Active) {
+                    Following = null;
+                } else {
+                    Center = Following.CenterPosition.ToPoint();
+                }
             }
 
-            int pxPerDownTick = (int)(BaseArrowScrollSpeedPx / zoom);
-            if(kState.IsKeyDown(Keys.Down)) {
-                Center += new Point(0, pxPerDownTick);
-            }
-            if(kState.IsKeyDown(Keys.Up)) {
-                Center += new Point(0, -pxPerDownTick);
-            }
-            if(kState.IsKeyDown(Keys.Right)) {
-                Center += new Point(pxPerDownTick, 0);
-            }
-            if(kState.IsKeyDown(Keys.Left)) {
-                Center += new Point(-pxPerDownTick, 0);
+            if(click) {
+                var clicked = world.ActiveGameObjs
+                    .OfType<GameObjects.CreatureComponents.Creature>()
+                    .FirstOrDefault(g => Vector2.Distance(g.CenterPosition, mouseTransformed.ToVector2()) < g.Radius);
+
+                if(clicked != null) {
+                    if(clicked != Following) {
+                        if(Following != null) {
+                            Following.ShowInfo = false;
+                        }
+                        Following = clicked;
+                        Following.ShowInfo = true;
+                    } else {
+                        Following.ShowInfo = false;
+                        Following = null;
+                    }
+                }
             }
         }
     }
