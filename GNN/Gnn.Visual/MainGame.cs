@@ -190,7 +190,7 @@ namespace Gnn.Visual {
 
             if(ShowHelp) {
                 DrawHelper.DrawRect(spriteBatch, 0, 0, InitScreenWidth, InitScreenHeight, Color.LightGray);
-                spriteBatch.DrawString(Res.FTrebuchet, "Plus / Minus to control speed\nCtrl + Plus / Minus for superspeed\n\nCam:\n    Drag w/ mouse to move cam\n    Scroll for zoom\n    Ctrl + Scroll for rotation\n    Ctrl + Space to reset\n\nClick a creature to follow it around", new Vector2(50, 50), Color.Black);
+                spriteBatch.DrawString(Res.FTrebuchet, "Plus / Minus to control speed\nCtrl + Plus / Minus for superspeed\n\nCam:\n    Drag w/ mouse to move cam\n    Scroll for zoom\n    Ctrl + Scroll for rotation\n    Ctrl + Space to reset\n\nClick a creature to follow it around\nSelect next creatures w\\ Ctrl + RightArrow", new Vector2(50, 50), Color.Black);
             }
         }
 
@@ -213,7 +213,7 @@ namespace Gnn.Visual {
                 Exit();
             }
 
-            Cam.HandleInput(mState, kState, click, World);
+            Cam.HandleInput(mState, kState, click, keyWentDown, World);
 
             //Update speed control
             if(keyWentDown(Keys.Add)) {

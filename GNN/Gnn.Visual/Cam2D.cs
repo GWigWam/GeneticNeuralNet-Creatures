@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Linq;
 
 namespace Gnn.Visual {
@@ -63,7 +64,7 @@ namespace Gnn.Visual {
             Center = centerPos ?? new Point(ViewWidth / 2, ViewHeight / 2);
         }
 
-        public void HandleInput(MouseState mState, KeyboardState kState, bool click, World world) {
+        public void HandleInput(MouseState mState, KeyboardState kState, bool click, Func<Keys, bool> keyWentDown, World world) {
             var mouseTransformed = Vector2.Transform(mState.Position.ToVector2(), Matrix.Invert(Transform)).ToPoint();
 
             if(!MouseDownPosTransformed.HasValue && mState.LeftButton == ButtonState.Pressed) {
@@ -73,7 +74,7 @@ namespace Gnn.Visual {
                 MouseDownPosTransformed = null;
             }
 
-            HandleSelection(click, mouseTransformed, world);
+            HandleSelection(click, mouseTransformed, kState, keyWentDown, world);
             HandleZoom(mState, kState);
             HandleClickDrag(mouseTransformed);
             HandleArrowScrolling(kState);
@@ -128,12 +129,20 @@ namespace Gnn.Visual {
             }
         }
 
-        private void HandleSelection(bool click, Point mouseTransformed, World world) {
+        private void HandleSelection(bool click, Point mouseTransformed, KeyboardState kState, Func<Keys, bool> keyWentDown, World world) {
             if(Following != null) {
                 if(!Following.Active) {
                     Following = null;
                 } else {
                     Center = Following.CenterPosition.ToPoint();
+                }
+            }
+
+            if(kState.IsKeyDown(Keys.LeftControl) || kState.IsKeyDown(Keys.RightControl)) {
+                if(keyWentDown(Keys.Right)) {
+                    var actives = world.CreatureObjs.Where(c => c.Active).ToArray();
+                    var ndx = ThreadSafeRandom.Instance.Next(0, actives.Length);
+                    Following = actives[ndx];
                 }
             }
 
