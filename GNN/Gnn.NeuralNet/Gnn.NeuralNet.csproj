@@ -47,6 +47,7 @@
     <Compile Include="Structures\Constant.cs" />
     <Compile Include="Structures\Perceptron.cs" />
     <Compile Include="Structures\TransferFunctions\HyperbolicTangentFunction.cs" />
+    <Compile Include="Structures\TransferFunctions\ReLUFunction.cs" />
     <Compile Include="Structures\TransferFunctions\SigmoidFunction.cs" />
     <Compile Include="Structures\TransferFunctions\TransferFunction.cs" />
     <Compile Include="Structures\Variable.cs" />
@@ -61,6 +62,7 @@
   <ItemGroup>
     <Content Include="Structures\TransferFunctions\Img_HyperbolicTangent.png" />
     <Content Include="Structures\TransferFunctions\Img_Sigmoid.png" />
+    <Content Include="Structures\TransferFunctions\ReLU.svg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

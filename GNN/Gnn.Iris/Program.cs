@@ -16,6 +16,7 @@ namespace Gnn.Iris {
         private const int NetworkCount = 500;
 
         private static TransferFunction Transfer = new HyperbolicTangentFunction();
+        //private static TransferFunction Transfer = new ReLUFunction();
         //private static TransferFunction Transfer = new SigmoidFunction();
 
         private static void Main(string[] args) {
