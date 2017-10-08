@@ -74,6 +74,7 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
                 Propellant.Move(secsPassed, accelerationDelta);
             }
             CenterPosition += Momentum * secsPassed;
+            StayInWorld();
         }
 
         public override void Interact(float secsPassed) {
@@ -122,8 +123,15 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
                     bottomReached = depth >= Math.Max(Brain.Net.Input.Length, Brain.Net.Output.Length) && depth >= Brain.Net.Hidden.Max(h => h.Length);
                 }
 
-                sb.DrawString(World.Game.Res.FConsolas, $"H={Health} S={Speed}\n{netStr}", CenterPosition + new Vector2(0, Radius + 3), Microsoft.Xna.Framework.Color.Black);
+                sb.DrawString(World.Game.Res.FConsolas, $"H={Health} S={Speed} C=({CenterPosition.X}, {CenterPosition.Y})\n{netStr}", CenterPosition + new Vector2(0, Radius + 3), Microsoft.Xna.Framework.Color.Black);
                 DrawHelper.DrawLine(sb, CenterPosition, GeomHelper.GetRelative(CenterPosition, MomentumAngle, Speed), 1, Microsoft.Xna.Framework.Color.DarkBlue);
+            }
+        }
+
+        private void StayInWorld() {
+            //Respawn creatures leaving from one side at the other side of the world, snake-style
+            if (CenterPosition.Length() > World.WorldSize * 1.05f) {
+                CenterPosition *= -1f;
             }
         }
     }
