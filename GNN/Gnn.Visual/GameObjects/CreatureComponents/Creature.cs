@@ -123,7 +123,7 @@ namespace Gnn.Visual.GameObjects.CreatureComponents {
                     bottomReached = depth >= Math.Max(Brain.Net.Input.Length, Brain.Net.Output.Length) && depth >= Brain.Net.Hidden.Max(h => h.Length);
                 }
 
-                sb.DrawString(World.Game.Res.FConsolas, $"H={Health} S={Speed} C=({CenterPosition.X}, {CenterPosition.Y})\n{netStr}", CenterPosition + new Vector2(0, Radius + 3), Microsoft.Xna.Framework.Color.Black);
+                sb.DrawString(World.Game.Res.FConsolas, $"H={Health} S={Speed} xy({(int)CenterPosition.X}, {(int)CenterPosition.Y})\n{netStr}", CenterPosition + new Vector2(0, Radius + 3), Microsoft.Xna.Framework.Color.Black);
                 DrawHelper.DrawLine(sb, CenterPosition, GeomHelper.GetRelative(CenterPosition, MomentumAngle, Speed), 1, Microsoft.Xna.Framework.Color.DarkBlue);
             }
         }
